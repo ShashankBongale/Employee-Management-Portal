@@ -391,7 +391,7 @@ def get_dept_id(e_id):
     return jsonify(res[0]['dept_id']),200
 
 @app.route('/get_e_type/<string:e_id>', methods=['GET'])   
-def get_dept_id(e_id):
+def get_e_type(e_id):
     client = MongoClient()
     db = client['employee_management_db']
     emp = db.employee_details_table
