@@ -129,6 +129,36 @@ def register():
     client.close()
     return jsonify({}),400
 
+@app.route('/get_leave_data/<string:empId>',methods=['GET'])
+def get_leave_data(empId):
+    client = MongoClient()
+    db = client['employee_management_db']
+    employee_details = db.employee_details_table
+    empInfo = employee_details.find_one({'e_id':empId})
+    if(empInfo != None):
+        data = empInfo["leave_left"]
+        client.close()
+        # print(data)
+        return jsonify(data),200
+    else:
+        client.close()
+        return jsonify({'status':'Invalid employee id'}),400
+
+@app.route('/get_emp_details/<string:empId>',methods=['GET'])
+def get_emloyee_details(empId):
+    client = MongoClient()
+    db = client['employee_management_db']
+    employee_details = db.employee_details_table
+    empInfo = employee_details.find_one({'e_id':empId})
+    if(empInfo != None):
+        client.close()
+        del empInfo["_id"]
+        # print(empInfo)
+        return jsonify(empInfo),200
+    else:
+        client.close()
+        return jsonify({'status':'Invalid employee id'}),400
+
 # Takes deptID from frontend which is given in the url
 # Input -> http:/127.0.0.1/get_leaves/Department_ID
 # Output -> {"27/10/2019":"10","30/10/2019":"5"}
@@ -348,7 +378,6 @@ def update_sb():
     client.close()
     return jsonify({}),200
 
-
 @app.route('/get_dept_id/<string:e_id>', methods=['GET'])   
 def get_dept_id(e_id):
     client = MongoClient()
@@ -373,7 +402,45 @@ def get_dept_id(e_id):
     client.close()
     return jsonify(res[0]['e_type']),200
 
+# This api gives salary status for this month,bonus status of this month
+# Input -> given through url http://127.0.0.1:5000/empID
+#Output -> {"Salary": "1,20,0000", "bonus_amount": "2,16,000", "bonus_status": "false", "salary_status": "true"}
+@app.route('/display_salary/<string:empID>',methods=['GET'])
+def displaySalary(empID):
+    client = MongoClient()
+    db = client['employee_management_db']
+    account_det = db.salary_detail_table
+    res = list(account_det.find({'e_id':empID}))
+    bonus_credited_date = res[0]['last_bonus_credited']
+    if(bonus_credited_date != ""):
+        bonus_year = bonus_credited_date.split('/')[2]
+    else:
+        bonus_year = "1970"
+    salary_credited_date = res[0]['last_salary_credited']
+    now = datetime.datetime.now()
+    month = str(now.month)
+    year = str(now.year)
+    d = dict()
+    last_salary_list = salary_credited_date.split('/')
+    if(month == last_salary_list[1] and year == last_salary_list[2]):
+        d["salary_status"] = "true"
+    else:
+        d["salary_status"] = "false"
+    emp_det = db.employee_details_table
+    res = list(emp_det.find({'e_id':empID}))
+    emp_type = res[0]['e_type']
+    account_det = db.account_department_table
+    res = list(account_det.find({'e_type':emp_type}))
+    salary_amount = res[0]['Salary']
+    d["Salary"] = salary_amount
+    bonus_amount = res[0]['Bonus']
+    if(bonus_year == year):
+        d["bonus_status"] = "true"
+    else:
+        d["bonus_status"] = "false"
+    d["bonus_amount"] = bonus_amount
+    return jsonify(d),200
 
 
 if __name__ == '__main__':
-    app.run("0.0.0.0",port=5000)
+    app.run("0.0.0.0",port=5000,debug=True)
