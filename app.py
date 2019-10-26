@@ -129,6 +129,9 @@ def register():
     client.close()
     return jsonify({}),400
 
+# Api returns the number of leave left in each category for a given employee
+# Input -> http://127.0.0.1:5000/employee_id
+#Output -> {"casual": ,"medical": ,"earned": }
 @app.route('/get_leave_data/<string:empId>',methods=['GET'])
 def get_leave_data(empId):
     client = MongoClient()
@@ -378,6 +381,9 @@ def update_sb():
     client.close()
     return jsonify({}),200
 
+# This api return department id given an employee id
+# Input -> http://127.0.0.1:5000/employee_id
+# output -> Department ID
 @app.route('/get_dept_id/<string:e_id>', methods=['GET'])   
 def get_dept_id(e_id):
     client = MongoClient()
@@ -390,6 +396,9 @@ def get_dept_id(e_id):
     client.close()
     return jsonify(res[0]['dept_id']),200
 
+# This api returns the employee type given an employee id
+# Input -> http://127.0.0.1:5000/employee_id
+# output -> DEV/MANAGER/HOD
 @app.route('/get_e_type/<string:e_id>', methods=['GET'])   
 def get_e_type(e_id):
     client = MongoClient()
