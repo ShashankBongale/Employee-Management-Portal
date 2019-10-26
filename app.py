@@ -4,15 +4,21 @@
 1. @app.route('/update_calendar',methods=['POST'])
 2. @app.route('/login',methods=['POST'])
 3. @app.route('/register',methods=['POST'])
-4. @app.route('/get_leaves/<string:deptId>',methods=['GET'])
-5. @app.route('/apply_leave',methods=['POST'])
-6. @app.route('/approve_leave',methods=['POST'])
-7. @app.route('/display_etypes',methods=['GET'])
-8. @app.route('/initiate-salary-process',methods=['POST'])
-9. @app.route('/get_leave_applications/<string:approver_id>',methods=['GET'])
-10. @app.route('/get_bonus_status/<string:approver_id>',methods=['GET'])
-11. @app.route('/approve_bonus',methods=['POST'])
-12. @app.route('/check_salary_status',methods=['GET'])
+4. @app.route('/get_leave_data/<string:empId>',methods=['GET'])
+5. @app.route('/get_emp_details/<string:empId>',methods=['GET'])
+6. @app.route('/get_leaves/<string:deptId>',methods=['GET'])
+7. @app.route('/apply_leave',methods=['POST'])
+8. @app.route('/approve_leave',methods=['POST'])
+9. @app.route('/display_etypes',methods=['GET'])
+10. @app.route('/initiate-salary-process',methods=['POST'])
+11. @app.route('/get_leave_applications/<string:approver_id>',methods=['GET'])
+12. @app.route('/get_bonus_status/<string:approver_id>',methods=['GET'])
+13. @app.route('/approve_bonus',methods=['POST'])
+14. @app.route('/check_salary_status',methods=['GET'])
+15. @app.route('/update_salary_bonus',methods=['POST'])
+16. @app.route('/get_dept_id/<string:e_id>', methods=['GET']) 
+17. @app.route('/get_e_type/<string:e_id>', methods=['GET']) 
+18. @app.route('/display_salary/<string:empID>',methods=['GET'])
 
 """
 
@@ -452,4 +458,4 @@ def displaySalary(empID):
 
 
 if __name__ == '__main__':
-    app.run("0.0.0.0",port=5000,debug=True)
+    app.run("0.0.0.0",port=5000)
