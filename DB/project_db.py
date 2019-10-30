@@ -83,7 +83,7 @@ data8={'e_id':'2019HRD002','last_salary_credited':'2/09/2019','reimbursed_amt':'
 data9={'e_id':'2019HRD003','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
 salary_det.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 
-8.Employee_cab_details
+#Employee_cab_details
 emp_cab_det=db.emp_cab_detail_table
 data =[{'e_id': '2019DEV001', 'location': (12.7502, 77.2129), 'distance': 0.44126279018289843, 'slope': 1.7240289069557067, 'login': 8, 'logout': 5, 'login_cab': '', 'logout_cab': ''},
  {'e_id': '2019DEV002', 'location': (12.8724, 77.908), 'distance': 0.32872511312645536, 'slope': -3.15927419354841, 'login': 8, 'logout': 5, 'login_cab': '', 'logout_cab': ''},
@@ -177,7 +177,7 @@ data =[{'e_id': '2019DEV001', 'location': (12.7502, 77.2129), 'distance': 0.4412
  {'e_id': '2019HRD030', 'location': (13.0283, 77.5101), 'distance': 0.10176020833312431, 'slope': -1.4902998236332734, 'login': 8, 'logout': 5, 'login_cab': '', 'logout_cab': ''}];
 emp_cab_det.insert(data)
 
-9.Cab_Management
+#Cab_Management
 cab_detail=db.cab_detail_table
 data=[{'cab_id': 'cab_0', 'pickup_order': '', 'passenger1': '', 'passenger2': '', 'passenger3': '', 'start_time': '', 'end_time': ''},
       {'cab_id': 'cab_1', 'pickup_order': '', 'passenger1': '', 'passenger2': '', 'passenger3': '', 'start_time': '', 'end_time': ''},
