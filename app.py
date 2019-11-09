@@ -19,7 +19,10 @@
 16. @app.route('/get_dept_id/<string:e_id>', methods=['GET']) 
 17. @app.route('/get_e_type/<string:e_id>', methods=['GET']) 
 18. @app.route('/display_salary/<string:empID>',methods=['GET'])
-
+19. @app.route('/apply_bill',methods=['POST'])
+20. @app.route('/view_bill_status/<string:empid>',methods=['GET'])
+21. @app.route('/view_all_bills',methods=['GET'])
+22. @app.route('/process_bill',methods=['POST'])
 """
 
 from flask import Flask, jsonify, request, abort
@@ -533,5 +536,6 @@ def process_bill():
     bill_info.update({'bill_id':bill_id},{'$set':{'status':bill_status}})
     client.close()
     return jsonify({}),200
+
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)
