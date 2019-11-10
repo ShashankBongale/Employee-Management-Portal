@@ -216,7 +216,44 @@ data=[{'cab_id': 'cab_0', 'pickup_order': '', 'passenger1': '', 'passenger2': ''
       {'cab_id': 'cab_34', 'pickup_order': '', 'passenger1': '', 'passenger2': '', 'passenger3': '', 'start_time': '', 'end_time': ''}];
 cab_detail.insert(data)
 
-
+#Cab Information Detail
+cab_info_detail=db.cab_info_detail_table
+data=[{ 'cab_id' : 'cab_0' , 'driver_name' : 'RUPESH KUMAR' , 'cab_no' : 'KA 03 AA 0128' , 'driver_number' : '8021047360' },
+{ 'cab_id' : 'cab_1' , 'driver_name' : 'JAYANT YADAV' , 'cab_no' : 'KA 11 JD 2975' , 'driver_number' : '9372859283' },
+{ 'cab_id' : 'cab_2' , 'driver_name' : 'DUSHYANT GOWDA' , 'cab_no' : 'KA 04 MJ 690' , 'driver_number' : '7028472940' },
+{ 'cab_id' : 'cab_3' , 'driver_name' : 'MOHAMMED SUHAIL' , 'cab_no' : 'KA17 CA 7780' , 'driver_number' : '9593953810' },
+{ 'cab_id' : 'cab_4' , 'driver_name' : 'ARVIND KUMAR' , 'cab_no' : 'KA 11 J 2259' , 'driver_number' : '6028449201' },
+{ 'cab_id' : 'cab_5' , 'driver_name' : 'SUJITH VERMA' , 'cab_no' : 'KA 42 Z 6240' , 'driver_number' : '8937375910' },
+{ 'cab_id' : 'cab_6' , 'driver_name' : 'AMIT SINGH' , 'cab_no' : 'KA 05 DB 1184 ' , 'driver_number' : '7392059204' },
+{ 'cab_id' : 'cab_7' , 'driver_name' : 'SANTHOSH KUMAR' , 'cab_no' : 'KA 18 IL 0032' , 'driver_number' : '8333819581' },
+{ 'cab_id' : 'cab_8' , 'driver_name' : 'PRAJWAL GOWDA' , 'cab_no' : 'KA 36 JM 3358' , 'driver_number' : '9285988184' },
+{ 'cab_id' : 'cab_9' , 'driver_name' : 'ABRAR ULLA KHAN' , 'cab_no' : 'KA 42 AL 786' , 'driver_number' : '7295917591' },
+{ 'cab_id' : 'cab_10' , 'driver_name' : 'ARJUN S' , 'cab_no' : 'KA 04 PR 007' , 'driver_number' : '9844466897' },
+{ 'cab_id' : 'cab_11' , 'driver_name' : 'DINESH YADAV' , 'cab_no' : 'KA 12 YZ 8385' , 'driver_number' : '8904550430' },
+{ 'cab_id' : 'cab_12' , 'driver_name' : 'RAKSHITH J' , 'cab_no' : 'KA 05 QW 3729' , 'driver_number' : '9986512357' },
+{ 'cab_id' : 'cab_13' , 'driver_name' : 'SHIVKUMAR' , 'cab_no' : 'KA 56 LO 7382' , 'driver_number' : '9986409361' },
+{ 'cab_id' : 'cab_14 ', 'driver_name' : 'MANISH T' , 'cab_no' : 'KA 64 FU 5372' , 'driver_number' : '7019658239' },
+{ 'cab_id' : 'cab_15' , 'driver_name' : 'JUNAID KHASIM' , 'cab_no' : 'KA 47 PQ 737' , 'driver_number' : '9900026128' },
+{ 'cab_id' : 'cab_16' , 'driver_name' : 'DURGESH' , 'cab_no' : 'KA 29 FU 2937' , 'driver_number' : '7295164017' },
+{ 'cab_id' : 'cab_17' , 'driver_name' : 'ARVIND KUMAR' , 'cab_no' : 'KA 18 CW 4729' , 'driver_number' : '9948203641' },
+{ 'cab_id' : 'cab_18' , 'driver_name' : 'CHETHAN SINGH' , 'cab_no' : 'KA 48 SH 391' , 'driver_number' : '8292075919' },
+{ 'cab_id' : 'cab_19' , 'driver_name' : 'RAJEEV' , 'cab_no' : 'KA 58 DU 8492' , 'driver_number' : '9175910484' },
+{ 'cab_id' : 'cab_20' , 'driver_name' : 'PANKAJ' , 'cab_no' : 'KA 08 D 8391' , 'driver_number' : '8293918492' },
+{ 'cab_id' : 'cab_21' , 'driver_name' : 'DINESH SINGH' , 'cab_no' : 'KA 26 HA 3838' , 'driver_number' : '7290455184' },
+{ 'cab_id' : 'cab_22' , 'driver_name' : 'SYED RIZVI' , 'cab_no' : 'KA 16 DU 2846' , 'driver_number' : '7200464819' },
+{ 'cab_id' : 'cab_23' , 'driver_name' : 'SANJAY' , 'cab_no' : 'KA 01 MT 4829' , 'driver_number' : '9957294185' },
+{ 'cab_id' : 'cab_24' , 'driver_name' : 'AMIT VERMA' , 'cab_no' : 'KA 46 HE 483' , 'driver_number' : '6185900174' },
+{ 'cab_id' : 'cab_25' , 'driver_name' : 'SUSHANT SINGH' , 'cab_no' : 'KA 18 DU 2758' , 'driver_number' : '9938316939' },
+{ 'cab-id' : 'cab_26' , 'driver_name' : 'RAJEEV' , 'cab_no' : 'KA 48 SJ 3729' , 'driver_number' : '8838366184' },
+{ 'cab_id' : 'cab_27' , 'driver_name' : 'YUSUF KHAN' , 'cab_no' : 'KA 10 HD 0278' , 'driver_number' : '9937255111' },
+{ 'cab_id' : 'cab_28' , 'driver_name' : 'ANTHONY JOSEFH' , 'cab_no' : 'KA 21 WJ 5920' , 'driver_number' : '8393066183' },
+{ 'cab_id' : 'cab_29' , 'driver_name' : 'AYAN MUKHERJEE' , 'cab_no' : 'KA 38 RI 2859' , 'driver_number' : '8492472949' },
+{ 'cab_id' : 'cab_30' , 'driver_name' : 'ROHIT GOWDA' , 'cab_no' : 'KA 48 DO 2402' , 'driver_number' : '9937364991' },
+{ 'cab_id' : 'cab_31' , 'driver_name' : 'CHANDAN SHETTY' , 'cab_no' : 'KA 19 OS 5820' , 'driver_number' : '8284001839' },
+{ 'cab_id' : 'cab_32' , 'driver_name' : 'MONISH V' , 'cab_no' : 'KA 39 SI 3829' , 'driver_number' : '8293520057' },
+{ 'cab_id' : 'cab_33' , 'driver_name' : 'DILBAGH SINGH' , 'cab_no' : 'KA 42 J 2250' , 'driver_number' : '7202663821' },
+{ 'cab_id' : 'cab_34' , 'driver_name' : 'SYED AKBAR' , 'cab_no' : 'KA 11 M 7247' , 'driver_number' : '9937174828' }];
+cab_info_detail.insert(data)
 
 
 
