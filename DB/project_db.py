@@ -44,7 +44,7 @@ data4 = {'e_id':'2019FIN001','user_name':'Ashu','e_contact':'8892267120','e_emai
 data5 = {'e_id':'2019FIN002','user_name':'Ashish','e_contact':'8792212039','e_email':'ashish67@gmail.com','e_type':'MANAGER','dept_id':'FINDEP','leave_left':{'casual':'10','earned':'12','medical':'8'},'approver_id':'2019FIN001'}
 data6 = {'e_id':'2019FIN003','user_name':'Alisha','e_contact':'8555755287','e_email':'alisha26@gmail.com','e_type':'ACCOUNTANT','dept_id':'FINDEP','leave_left':{'casual':'8','earned':'10','medical':'6'},'approver_id':'2019FIN002'}
 data7 = {'e_id':'2019HRD001','user_name':'Ayushi','e_contact':'9430712120','e_email':'ayushi@gmail.com','e_type':'HOD','dept_id':'HRDEPT','leave_left':{'casual':'12','earned':'14','medical':'10'},'approver_id':'2019HRD001'}
-data8 = {'e_id':'2019HRD002','user_name':'Deepika','e_contact':'9835513120','e_email':'deepika007@gmail.com','e_type':'HR MANAGER','dept_id':'HRDEPT','leave_left':{'casual':'10','earned':'12','medical':'8'},'approver_id':'2019HRD001'}
+data8 = {'e_id':'2019HRD002','user_name':'Deepika','e_contact':'9835513120','e_email':'deepika007@gmail.com','e_type':'MANAGER','dept_id':'HRDEPT','leave_left':{'casual':'10','earned':'12','medical':'8'},'approver_id':'2019HRD001'}
 data9 = {'e_id':'2019HRD003','user_name':'Purva','e_contact':'9939212120','e_email':'purva001@gmail.com','e_type':'HR','dept_id':'HRDEPT','leave_left':{'casual':'8','earned':'10','medical':'6'},'approver_id':'2019HRD002'}
 
 employee_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
@@ -63,12 +63,8 @@ data1={'e_type':'DEV','Salary':'60,000','Bonus':'1,08,000'}
 data2={'e_type':'MANAGER','Salary':'90,000','Bonus':'1,62,000'}
 data3={'e_type':'HOD','Salary':'1,20,0000','Bonus':'2,16,000'}
 data4={'e_type':'ACCOUNTANT','Salary':'65,000','Bonus':'1,17,000'}
-data5={'e_type':'MANAGER','Salary':'90,000','Bonus':'1,62,000'}
-data6={'e_type':'HOD','Salary':'1,20,000','Bonus':'2,16,000'}
-data7={'e_type':'HR','Salary':'70,000','Bonus':'1,26,000'}
-data8={'e_type':'HR MANAGER','Salary':'90,000','Bonus':'1,62,000'}
-data9={'e_type':'HOD','Salary':'1,20,000','Bonus':'2,16,000'}
-account_det.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
+data5={'e_type':'HR','Salary':'70,000','Bonus':'1,26,000'}
+account_det.insert_many([data1,data2,data3,data4,data5])
 
 #7.Salary
 salary_det=db.salary_detail_table
