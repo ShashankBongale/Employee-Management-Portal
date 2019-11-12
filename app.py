@@ -4,16 +4,25 @@
 1. @app.route('/update_calendar',methods=['POST'])
 2. @app.route('/login',methods=['POST'])
 3. @app.route('/register',methods=['POST'])
-4. @app.route('/get_leaves/<string:deptId>',methods=['GET'])
-5. @app.route('/apply_leave',methods=['POST'])
-6. @app.route('/approve_leave',methods=['POST'])
-7. @app.route('/display_etypes',methods=['GET'])
-8. @app.route('/initiate-salary-process',methods=['POST'])
-9. @app.route('/get_leave_applications/<string:approver_id>',methods=['GET'])
-10. @app.route('/get_bonus_status/<string:approver_id>',methods=['GET'])
-11. @app.route('/approve_bonus',methods=['POST'])
-12. @app.route('/check_salary_status',methods=['GET'])
-
+4. @app.route('/get_leave_data/<string:empId>',methods=['GET'])
+5. @app.route('/get_emp_details/<string:empId>',methods=['GET'])
+6. @app.route('/get_leaves/<string:deptId>',methods=['GET'])
+7. @app.route('/apply_leave',methods=['POST'])
+8. @app.route('/approve_leave',methods=['POST'])
+9. @app.route('/display_etypes',methods=['GET'])
+10. @app.route('/initiate-salary-process',methods=['POST'])
+11. @app.route('/get_leave_applications/<string:approver_id>',methods=['GET'])
+12. @app.route('/get_bonus_status/<string:approver_id>',methods=['GET'])
+13. @app.route('/approve_bonus',methods=['POST'])
+14. @app.route('/check_salary_status',methods=['GET'])
+15. @app.route('/update_salary_bonus',methods=['POST'])
+16. @app.route('/get_dept_id/<string:e_id>', methods=['GET']) 
+17. @app.route('/get_e_type/<string:e_id>', methods=['GET']) 
+18. @app.route('/display_salary/<string:empID>',methods=['GET'])
+19. @app.route('/apply_bill',methods=['POST'])
+20. @app.route('/view_bill_status/<string:empid>',methods=['GET'])
+21. @app.route('/view_all_bills',methods=['GET'])
+22. @app.route('/process_bill',methods=['POST'])
 """
 
 from flask import Flask, jsonify, request, abort
@@ -23,11 +32,6 @@ import re
 from datetime import date
 import datetime
 import pickle
-
-import random
-from datetime import timedelta
-time_coef = 250
-
 app = Flask(__name__)
 @app.after_request
 def after_request(response):
@@ -104,12 +108,18 @@ def check_login():
         return jsonify(d),200
 
 
-# if 400 returned redirect to /login page
+# Manager enters New Employees Name, default password, dept_id of employee, e_type of employee,
+# contact number and email id and approver_id
 @app.route('/register',methods=['POST'])
 def register():
     usr = request.json["user_name"]
     password = request.json["password"]
     dept = request.json["dept_id"]
+    number = request.json["e_contact"]
+    email = request.json["e_email"]
+    etype = request.json["e_type"]
+    approver = request.json["approver_id"]
+
     client = MongoClient()
     db = client['employee_management_db']
     user_in_table = list(db.login_table.find({'user_name':usr}))
@@ -127,13 +137,28 @@ def register():
         m = max(id_lis)+1
         year = date.today().year
         id = str(year)+department+str(m).zfill(3)
+        #insert into login table
         data = {'e_id':id,'user_name':usr,'password':password}
         db.login_table.insert_one(data)
+        #insert into employee_details_table
+        leavelist = list(db.calendar_table.find({'dept_id':dept,'e_type':etype}))
+        leaves = dict()
+        leaves['casual'] = leavelist[0]['casual']
+        leaves['earned'] = leavelist[0]['earned']
+        leaves['medical'] = leavelist[0]['medical']
+        data = {'e_id':id,'user_name':usr,'e_contact':number,'e_email':email,'e_type':etype,'dept_id':dept,'leave_left':leaves,'approver_id':approver}
+        db.employee_details_table.insert_one(data)
+        #insert into salary_detail_table
+        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':0,'last_bonus_credited':""}
+        db.salary_detail_table.insert_one(data)
         client.close()
         return jsonify({}),200
     client.close()
     return jsonify({}),400
 
+# Api returns the number of leave left in each category for a given employee
+# Input -> http://127.0.0.1:5000/employee_id
+#Output -> {"casual": ,"medical": ,"earned": }
 @app.route('/get_leave_data/<string:empId>',methods=['GET'])
 def get_leave_data(empId):
     client = MongoClient()
@@ -362,6 +387,174 @@ def check_salary_status(eid):
     client.close()
     return jsonify(res),200
 
+# This api is used by account department to update the salary and bonus of a particular employee type
+# Input -> {"e_type": ,"Salary": ,"Bonus": } //make sure all the values are string
+# Output -> empty json string with return status 200
+@app.route('/update_salary_bonus',methods=['POST'])
+def update_sb():
+    etype = request.json['e_type']
+    salary = request.json['Salary']
+    bonus = request.json['Bonus']
+    client = MongoClient()
+    db = client['employee_management_db']
+    det = db.account_department_table
+    res = list(det.find({'e_type':etype}))
+    if(len(res) == 0):
+        data = {'e_type':etype,'Salary':salary,'Bonus':bonus}
+        det.insert_one(data)
+        client.close()
+        return jsonify({}),200
+    det.update({'e_type':etype},{"$set":{'Salary':salary,'Bonus':bonus}})
+    client.close()
+    return jsonify({}),200
+
+# This api return department id given an employee id
+# Input -> http://127.0.0.1:5000/employee_id
+# output -> Department ID
+@app.route('/get_dept_id/<string:e_id>', methods=['GET'])   
+def get_dept_id(e_id):
+    client = MongoClient()
+    db = client['employee_management_db']
+    emp = db.employee_details_table
+    res = list(emp.find({'e_id':e_id}))
+    if(len(res)==0):
+        client.close()
+        return jsonify({}),400
+    client.close()
+    return jsonify(res[0]['dept_id']),200
+
+# This api returns the employee type given an employee id
+# Input -> http://127.0.0.1:5000/employee_id
+# output -> DEV/MANAGER/HOD
+@app.route('/get_e_type/<string:e_id>', methods=['GET'])   
+def get_e_type(e_id):
+    client = MongoClient()
+    db = client['employee_management_db']
+    emp = db.employee_details_table
+    res = list(emp.find({'e_id':e_id}))
+    if(len(res)==0):
+        client.close()
+        return jsonify({}),400
+    client.close()
+    return jsonify(res[0]['e_type']),200
+
+# This api gives salary status for this month,bonus status of this month
+# Input -> given through url http://127.0.0.1:5000/empID
+#Output -> {"Salary": "1,20,0000", "bonus_amount": "2,16,000", "bonus_status": "false", "salary_status": "true"}
+@app.route('/display_salary/<string:empID>',methods=['GET'])
+def displaySalary(empID):
+    client = MongoClient()
+    db = client['employee_management_db']
+    account_det = db.salary_detail_table
+    res = list(account_det.find({'e_id':empID}))
+    bonus_credited_date = res[0]['last_bonus_credited']
+    if(bonus_credited_date != ""):
+        bonus_year = bonus_credited_date.split('/')[2]
+    else:
+        bonus_year = "1970"
+    salary_credited_date = res[0]['last_salary_credited']
+    now = datetime.datetime.now()
+    month = str(now.month)
+    year = str(now.year)
+    d = dict()
+    last_salary_list = salary_credited_date.split('/')
+    if(month == last_salary_list[1] and year == last_salary_list[2]):
+        d["salary_status"] = "true"
+    else:
+        d["salary_status"] = "false"
+    emp_det = db.employee_details_table
+    res = list(emp_det.find({'e_id':empID}))
+    emp_type = res[0]['e_type']
+    account_det = db.account_department_table
+    res = list(account_det.find({'e_type':emp_type}))
+    salary_amount = res[0]['Salary']
+    d["Salary"] = salary_amount
+    bonus_amount = res[0]['Bonus']
+    if(bonus_year == year):
+        d["bonus_status"] = "true"
+    else:
+        d["bonus_status"] = "false"
+    d["bonus_amount"] = bonus_amount
+    return jsonify(d),200
+
+###Bill APIs ###
+
+@app.route('/apply_bill',methods=['POST'])
+def applybill():
+    eid = request.json['e_id']
+    image = request.json['bill_image']
+    amount = int(request.json['bill_amount'])
+    bill_id = -1
+    client = MongoClient()
+    db = client['employee_management_db']
+    det = db.bills_table
+    all_rows = list(det.find())
+    for i in all_rows:
+        if(int(i['bill_id']) > bill_id):
+            bill_id = int(i['bill_id'])
+    bill_id = bill_id + 1
+    data = dict()
+    data['bill_image'] = image
+    data['bill_amount'] = str(amount)
+    data['e_id'] = eid
+    data['bill_id'] = str(bill_id)
+    emp_det = db.employee_details_table
+    res = list(emp_det.find({'e_id':eid}))
+    rem_amt = int(res[0]['reamt'])
+    if(rem_amt >= amount):
+        data['status'] = "pending"
+        #emp_det.update({'e_id':eid},{"$set":{'reamt':str(rem_amt - amount)}})
+        return_response = 200
+    else:
+        data['status'] = "rejected"
+        return_response = 400
+    det.insert_one(data)
+    client.close()
+    return jsonify({}),return_response
+
+@app.route('/view_bill_status/<string:empid>',methods=['GET'])
+def view_bill_status(empid):
+    bills = []
+    client = MongoClient()
+    db = client['employee_management_db']
+    bill_info = db.bills_table
+    res = list(bill_info.find({'e_id':empid}))
+    for i in res:
+        temp = dict()
+        temp['bill_image'] = i['bill_image']
+        temp['bill_amount'] = i['bill_amount']
+        temp['status'] = i['status']
+        bills.append(temp)
+    client.close()
+    return jsonify(bills),200
+
+@app.route('/view_all_bills',methods=['GET'])
+def view_all_bills():
+    client = MongoClient()
+    bills = []
+    db = client['employee_management_db']
+    bill_info = db.bills_table
+    res = list(bill_info.find({'status':'pending'}))
+    for i in res:
+        temp = dict()
+        for j in i:
+            if(j != '_id'):
+                temp[j] = i[j]
+        bills.append(temp)
+    client.close()
+    return jsonify(bills),200
+
+@app.route('/process_bill',methods=['POST'])
+def process_bill():
+    bill_id = request.json['bill_id']
+    bill_status = request.json['bill_status']
+    client = MongoClient()
+    db = client['employee_management_db']
+    bill_info = db.bills_table
+    bill_info.update({'bill_id':bill_id},{'$set':{'status':bill_status}})
+    client.close()
+    return jsonify({}),200
+
 # cab APIs
 
 @app.route('/schedule_login',methods=['POST'])
@@ -585,7 +778,5 @@ def show_cab_details_logout():
 	else:
 		return jsonify({'status':'cab not allocated'}),400	
 
-
-  
 if __name__ == '__main__':
-    app.run("0.0.0.0",port=5000,debug=True)
+    app.run("0.0.0.0",port=5000)
