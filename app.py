@@ -555,5 +555,228 @@ def process_bill():
     client.close()
     return jsonify({}),200
 
+# cab APIs
+
+@app.route('/schedule_login',methods=['POST'])
+def login():
+    client = MongoClient()
+    db = client['employee_management_db']
+    employee_cab_details = db.emp_cab_detail_table
+    emp_cab_data = list(employee_cab_details.find())
+    data = [[x['e_id'],x['location'],x['distance'],x['slope'],x['login'],x['logout'],x['login_cab'],x['logout_cab']] for x in emp_cab_data ]
+    employee_cab_details.update_many({},{"$set": {'logout_cab':0}})
+    data_5 = [i for i in data if(i[4] == 5)]
+    data_8 = [i for i in data if(i[4] == 8)]
+    data_11 = [i for i in data if(i[4] == 11)]
+    
+    cab_data = schedule_login(data_5)
+    for x in data_5:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'login_cab':x[6]}})
+
+    cab_data = schedule_login(data_8)
+    for x in data_8:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'login_cab':x[6]}})
+
+    cab_data = schedule_login(data_11)
+    for x in data_11:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'login_cab':x[6]}})
+
+    return jsonify({'status':'scheduled successfully'}),200
+
+def schedule_login(data):
+    if(len(data) == 0):
+        print("empty")
+        cab_data = []
+    else:
+        data.sort(key=lambda x:x[3])
+        cab_id = 1
+        cab_data = []
+        ind = 0
+        login = data[0][4]
+        while(ind<len(data)):
+            temp = data[ind:ind+3]
+            cab = {}
+            cab["cabId"] = cab_id
+            distances = [temp[i][2] for i in range(len(temp))]
+            if(len(temp) == 3):
+                first = distances.index(max(distances))
+                last = distances.index(min(distances))
+                second = (3-(first+last))
+                order = "passenger" + str(first+1) + " -> passenger" + str(second+1) + " -> passenger" + str(last+1)
+            elif(len(temp) == 2):
+                first = distances.index(max(distances))
+                last = distances.index(min(distances))
+                order = "passenger" + str(first+1) + " -> passenger" + str(last+1)
+            else:
+                order = "passenger1"
+
+            cab["pickupOrder"] = order
+            for i in range(len(temp)):
+                passenger = {}
+                passenger["e_id"] = temp[i][0]
+                passenger["location"] = temp[i][1]
+                passenger["distance"] = temp[i][2]
+                cab["passenger" + str(i+1) + "Details"] = passenger
+            time = str(timedelta(minutes=((login*60) - (max(distances)*time_coef))))[:4]
+            cab["startTime"] = time
+            cab["endTime"] = str(timedelta(minutes=(login*60)))[:4]
+            cab_data.append(cab)
+            for y in range(ind,len(data))[0:3]:
+                data[y][6] =  cab_id 
+            cab_id += 1
+            ind+=3
+    return cab_data        
+        
+
+@app.route('/schedule_logout',methods=['POST'])
+def logout():
+    client = MongoClient()
+    db = client['employee_management_db']
+    employee_cab_details = db.emp_cab_detail_table
+    emp_cab_data = list(employee_cab_details.find())
+    data = [[x['e_id'],x['location'],x['distance'],x['slope'],x['login'],x['logout'],x['login_cab'],x['logout_cab']] for x in emp_cab_data ]
+    employee_cab_details.update_many({},{"$set": {'login_cab':0}})
+    data_15 = [i for i in data if(i[5] == 5)]
+    data_18 = [i for i in data if(i[5] == 18)]
+    data_21 = [i for i in data if(i[5] == 21)]
+    
+    cab_data = schedule_logout(data_15)
+    for x in data_15:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
+
+    cab_data = schedule_logout(data_18)
+    for x in data_18:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
+        
+    cab_data = schedule_logout(data_21)
+    for x in data_21:
+        employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
+
+    return jsonify({'status':'scheduled successfully'}),200
+
+def schedule_logout(data):
+    if(len(data) == 0):
+        print("empty")
+        cab_data = []
+    else:
+        data.sort(key=lambda x:x[3],reverse=True)
+        cab_id = 1
+        cab_data = []
+        ind = 0
+        logout = data[0][5]
+        while(ind<len(data)):
+            temp = data[ind:ind+3]
+            cab = {}
+            cab["cabId"] = cab_id
+            distances = [temp[i][2] for i in range(len(temp))]
+            if(len(temp) == 3):
+                first = distances.index(min(distances))
+                last = distances.index(max(distances))
+                second = (3-(first+last))
+                order = "passenger" + str(first+1) + " -> passenger" + str(second+1) + " -> passenger" + str(last+1)
+            elif(len(temp) == 2):
+                first = distances.index(min(distances))
+                last = distances.index(max(distances))
+                order = "passenger" + str(first+1) + " -> passenger" + str(last+1)
+            else:
+                order = "passenger1"
+
+            cab["pickupOrder"] = order
+            for i in range(len(temp)):
+                passenger = {}
+                passenger["e_id"] = temp[i][0]
+                passenger["location"] = temp[i][1]
+                passenger["distance"] = temp[i][2]
+                cab["passenger" + str(i+1) + "Details"] = passenger
+            cab["startTime"] = str(timedelta(minutes=(logout*60)))[:5]
+            time = str(timedelta(minutes=((logout*60) + (max(distances)*time_coef))))[:5]
+            cab["endTime"] = time
+            cab_data.append(cab)
+            for y in range(ind,len(data))[0:3]:
+                data[y][7] =  cab_id 
+            cab_id += 1
+            ind+=3
+    return cab_data
+
+@app.route('/book_login',methods=['POST'])
+def book_login():
+	emp_id=request.json["e_id"]
+	login_time=request.json["login"]
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':login_time}})
+
+	return jsonify({'status':'booked successfully'}),200
+
+@app.route('/book_logout',methods=['POST'])
+def book_logout():
+	emp_id=request.json["e_id"]
+	logout_time=request.json["logout"]
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':logout_time}})
+
+	return jsonify({'status':'booked successfully'}),200
+
+@app.route('/cancel_login',methods=['POST'])
+def cancel_login():
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':0}})
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'login_cab':0}})
+	return jsonify({'status':'cancelled'}),200
+
+@app.route('/cancel_logout',methods=['POST'])
+def cancel_logout():
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':0}})
+	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout_cab':0}})
+	return jsonify({'status':'cancelled'}),200
+
+@app.route('/show_cab_details_login',methods=['POST'])
+def show_cab_details_login():
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	cab_driver_info_detail=db.cab_driver_info_detail_table
+	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+	login_cab_id=emp_cab_info[0]['login_cab']
+	# print("cab_id ================",login_cab_id)
+	if(emp_cab_info[0]['login'] != 0 and login_cab_id != 0):
+		cab_info=list(cab_driver_info_detail.find({'cab_id':login_cab_id}))
+		driver_name=cab_info[0]['driver_name']
+		driver_number=cab_info[0]['driver_number']
+		cab_number=cab_info[0]['cab_no']
+		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+	else:
+		return jsonify({'status':'cab not allocated'}),400	
+
+@app.route('/show_cab_details_logout',methods=['POST'])
+def show_cab_details_logout():
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	cab_driver_info_detail=db.cab_driver_info_detail_table
+	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+	logout_cab_id=emp_cab_info[0]['logout_cab']
+	# print("cab_id ================",logout_cab_id)
+	if(emp_cab_info[0]['logout'] != 0 and logout_cab_id != 0):
+		cab_info=list(cab_driver_info_detail.find({'cab_id':logout_cab_id}))
+		driver_name=cab_info[0]['driver_name']
+		driver_number=cab_info[0]['driver_number']
+		cab_number=cab_info[0]['cab_no']
+		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+	else:
+		return jsonify({'status':'cab not allocated'}),400	
+
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)
