@@ -108,12 +108,18 @@ def check_login():
         return jsonify(d),200
 
 
-# if 400 returned redirect to /login page
+# Manager enters New Employees Name, default password, dept_id of employee, e_type of employee,
+# contact number and email id and approver_id
 @app.route('/register',methods=['POST'])
 def register():
     usr = request.json["user_name"]
     password = request.json["password"]
     dept = request.json["dept_id"]
+    number = request.json["e_contact"]
+    email = request.json["e_email"]
+    etype = request.json["e_type"]
+    approver = request.json["approver_id"]
+
     client = MongoClient()
     db = client['employee_management_db']
     user_in_table = list(db.login_table.find({'user_name':usr}))
@@ -131,8 +137,20 @@ def register():
         m = max(id_lis)+1
         year = date.today().year
         id = str(year)+department+str(m).zfill(3)
+        #insert into login table
         data = {'e_id':id,'user_name':usr,'password':password}
         db.login_table.insert_one(data)
+        #insert into employee_details_table
+        leavelist = list(db.calendar_table.find({'dept_id':dept,'e_type':etype}))
+        leaves = dict()
+        leaves['casual'] = leavelist[0]['casual']
+        leaves['earned'] = leavelist[0]['earned']
+        leaves['medical'] = leavelist[0]['medical']
+        data = {'e_id':id,'user_name':usr,'e_contact':number,'e_email':email,'e_type':etype,'dept_id':dept,'leave_left':leaves,'approver_id':approver}
+        db.employee_details_table.insert_one(data)
+        #insert into salary_detail_table
+        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':0,'last_bonus_credited':""}
+        db.salary_detail_table.insert_one(data)
         client.close()
         return jsonify({}),200
     client.close()
