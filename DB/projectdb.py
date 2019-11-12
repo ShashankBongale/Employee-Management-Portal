@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import json
 client = MongoClient()
 db = client['employee_management_db']
 
@@ -83,3 +84,10 @@ salary_det.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 bills_info = db.bills_table
 data1 = {'e_id':'2019DEV001','bill_id':'1','bill_image':'','bill_amount':'0','status':'pending'}
 bills_info.insert_one(data1)
+
+#9.Data for ML
+with open('final_data.json') as json_file:
+    data = json.load(json_file)
+ml_data = db.ml_data_table
+ml_data.insert_one(data)
+
