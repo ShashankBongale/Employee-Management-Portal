@@ -61,16 +61,20 @@ def pre_process(text):
 data = dict()
 content, label = [], []
 
+#------------------------------add mongo code to get data from db------------------
 with open('final_data.json', 'r') as f:
     data = json.load(f)
+print(type(data))
     
 for each in data:
     content.append(each)
     label.append(data[each])
-    
+
+#----------------------------input file-------------------------------------------
 f = open("resume.txt", "r")
 
 test = f.read()
+print(type(test))
 test = pre_process(test)
 
 content.append(test)
