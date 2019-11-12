@@ -226,7 +226,9 @@ data=[{ 'cab_id' : 1 , 'driver_name' : 'RUPESH KUMAR' , 'cab_no' : 'KA 03 AA 012
 { 'cab_id' : 35 , 'driver_name' : 'SYED AKBAR' , 'cab_no' : 'KA 11 M 7247' , 'driver_number' : '9937174828' }];
 cab_driver_info_detail.insert(data)
 
-
-
-
+#9.Data for ML
+with open('final_data.json') as json_file:
+    data = json.load(json_file)
+ml_data = db.ml_data_table
+ml_data.insert_one(data)
 
