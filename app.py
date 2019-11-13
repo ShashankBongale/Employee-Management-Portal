@@ -573,6 +573,22 @@ def process_bill():
     client.close()
     return jsonify({}),200
 
+#Get leave application status for the employee
+#Pass E_id as url parameter
+#If leave has not been applied display - No leaves applied
+@app.route('/get_leave_status/<string:empid>',methods=['GET'])
+def get_leave_status(empid):
+    client = MongoClient()
+    db = client['employee_management_db']
+    leavedata = db.leave_collection_table
+    res = list(leavedata.find({'e_id':empid}))
+    if(len(res)==0):
+        output=["No leave Applications found"]
+    else:
+        output = list(res[0]['status'])
+    client.close()
+    return jsonify(output),200
+
 # cab APIs
 
 @app.route('/schedule_login',methods=['POST'])
@@ -855,8 +871,6 @@ def classify_resume():
     output = mp[y_pred[0]]
 
     return(jsonify([output])),200
-
-
 
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)
