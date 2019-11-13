@@ -1,0 +1,100 @@
+Assistant Manager
+Assistant Manager - Get My Parking
+Bengaluru, Karnataka
+To work in an environment conducive to learning & to unleash my potential, put in full  
+efforts for the development of the organization & side by side develop my speed &  
+accuracy.
+Work Experience
+Assistant Manager
+Get My Parking -  Bengaluru, Karnataka
+May 2018 to Present
+Role: Operation, Technical Operations  
+Project Description:  
+  
+I involved in automation and IOT department. As a smart parking company we integrate  
+our solution to manage the parking with mobile app, UHF RFID Reader, QR Reader and  
+ANPR Camera.  
+  
+● Configuring local networks for the system with LAN wires, routers etc.  
+● Setup full system like RFID and Boom Barrier on the ground.  
+● Manage ground team.  
+● System Installation.  
+● Manual Testing (Android Application and Web)  
+● API Testing [ Tool - Postman (Beginner) ]  
+● R & D on hardware.  
+● Work with docker (Docker compose, Container, Docker installation, Docker  
+commands)  
+● Quality testing of hardware and software.  
+● Work on IOT.  
+● Networking, Linux System and Hardware troubleshooting.  
+● Work on Arduino UNO and Raspberry PI.  
+  
+Experience Summary:
+Operation Executive
+Parkwheels -  Gurgaon, Haryana
+December 2016 to April 2018
+Role: Operations, Technical Operations  
+  
+Project Description:  
+I was involved in core operation department apart from my main profile i involved in automation and installation. As a smart parking company we integrate our solution to  
+manage the parking with mobile app, UHF RFID Reader.  
+  
+● Handling multiple clients and providing them with 24*7 Support.  
+● Providing on call assistance to operators using the companies parking system.  
+● Keeping track of all hardware components provided by the company to the clients and components that are to be replaced, repaired etc. Thus managing the  
+complete inventory of the company including keeping bills and invoices intact and maintaining records of all buy and sell through the company.  
+● To oversee the proper functioning of system by training operators after the system is live and handling all their queries.  
+● Configuring local networks for the system with LAN wires, routers etc.  
+● Looking after all the procurement done by the company.  
+● Providing technical assistance on site when something goes down in the system.  
+Keeping track of all versions of the system running at multiple site installations.  
+● Handling end user queries and guiding them to necessary steps required to make their experience on the system seamless.  
+● Providing go ready hardware components to tech team for installations including  
+setting up raspberry Pi's and configuring network routers to handle the system  
+local network.  
+  
+Experience Summary:
+Network Operations Engineer
+LAVA Online ISP -  Moradabad, Uttar Pradesh
+December 2015 to September 2016
+Location: Moradabad, Uttar Pradesh  
+Duration: Dec '2015 - Sep '2016  
+Role: Technical Operations, Network Administrative  
+  
+Project Description:  
+I involved in Networking, LAN, WAN, Routing department. As an ISP we provide  
+internet over wireless devices.  
+  
+● Work on IP address, LAN, WAN, Configuring Router.  
+● Troubleshooting  
+● Site Operations
+Education
+B.Tech
+MIT -  Moradabad, Uttar Pradesh
+2015
+Board / Institute
+Skills
+LAN (3 years), NETWORKING (2 years), SYSTEM INSTALLATION (1 year), TECHNICAL ASSISTANCE (1 year), ROUTER (Less than 1 year)
+Additional Information
+Key Skills:  
+● Operation Management  
+● Leadership  
+● Problem Solving  
+● Technical Support  
+● Technical assistance on the ground.  
+● Work on Ground  
+● System Installation  
+  
+IT Skills:  
+  
+Operating System:  
+Microsoft Windows 10/8/7/XP, Ubuntu 16.04, Ubuntu 18.04, U IOS  
+Computer Networking:  
+LAN, WAN, Switching and Router, IP Address  
+Automation and IOT:  
+R & D on the hardware, Sound Knowledge of shell script, Docker, Python and Core  
+JAVA.  
+  
+Academic Project:  
+Project Title: Mouse Work Replaced By Hand Using Webcam  
+Language used: ASP.NET

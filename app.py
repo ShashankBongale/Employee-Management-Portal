@@ -32,15 +32,33 @@ import re
 from datetime import date
 import datetime
 import pickle
+import pandas as pd
+import numpy as np
+import json
+import re
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.linear_model import SGDClassifier
+import string
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tag import StanfordNERTagger
+import warnings
+from ml_module import POS_remove,pre_process
+warnings.filterwarnings('ignore')
+
 app = Flask(__name__)
 @app.after_request
 def after_request(response):
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  response.headers.add('Origin','127.0.0.1')
-  return response
- 
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Origin','127.0.0.1')
+    return response
+
 @app.route('/check',methods=['GET'])
 def trial_connection():
     trial_list = dict()
@@ -568,7 +586,7 @@ def login():
     data_5 = [i for i in data if(i[4] == 5)]
     data_8 = [i for i in data if(i[4] == 8)]
     data_11 = [i for i in data if(i[4] == 11)]
-    
+
     cab_data = schedule_login(data_5)
     for x in data_5:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'login_cab':x[6]}})
@@ -626,7 +644,7 @@ def schedule_login(data):
             cab_id += 1
             ind+=3
     return cab_data        
-        
+
 
 @app.route('/schedule_logout',methods=['POST'])
 def logout():
@@ -639,7 +657,7 @@ def logout():
     data_15 = [i for i in data if(i[5] == 5)]
     data_18 = [i for i in data if(i[5] == 18)]
     data_21 = [i for i in data if(i[5] == 21)]
-    
+
     cab_data = schedule_logout(data_15)
     for x in data_15:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
@@ -647,7 +665,7 @@ def logout():
     cab_data = schedule_logout(data_18)
     for x in data_18:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
-        
+
     cab_data = schedule_logout(data_21)
     for x in data_21:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
@@ -700,83 +718,145 @@ def schedule_logout(data):
 
 @app.route('/book_login',methods=['POST'])
 def book_login():
-	emp_id=request.json["e_id"]
-	login_time=request.json["login"]
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':login_time}})
+        emp_id=request.json["e_id"]
+        login_time=request.json["login"]
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login':login_time}})
 
-	return jsonify({'status':'booked successfully'}),200
+        return jsonify({'status':'booked successfully'}),200
 
 @app.route('/book_logout',methods=['POST'])
 def book_logout():
-	emp_id=request.json["e_id"]
-	logout_time=request.json["logout"]
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':logout_time}})
+        emp_id=request.json["e_id"]
+        logout_time=request.json["logout"]
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':logout_time}})
 
-	return jsonify({'status':'booked successfully'}),200
+        return jsonify({'status':'booked successfully'}),200
 
 @app.route('/cancel_login',methods=['POST'])
 def cancel_login():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':0}})
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login_cab':0}})
-	return jsonify({'status':'cancelled'}),200
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login':0}})
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login_cab':0}})
+        return jsonify({'status':'cancelled'}),200
 
 @app.route('/cancel_logout',methods=['POST'])
 def cancel_logout():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':0}})
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout_cab':0}})
-	return jsonify({'status':'cancelled'}),200
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':0}})
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout_cab':0}})
+        return jsonify({'status':'cancelled'}),200
 
 @app.route('/show_cab_details_login',methods=['POST'])
 def show_cab_details_login():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	cab_driver_info_detail=db.cab_driver_info_detail_table
-	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
-	login_cab_id=emp_cab_info[0]['login_cab']
-	# print("cab_id ================",login_cab_id)
-	if(emp_cab_info[0]['login'] != 0 and login_cab_id != 0):
-		cab_info=list(cab_driver_info_detail.find({'cab_id':login_cab_id}))
-		driver_name=cab_info[0]['driver_name']
-		driver_number=cab_info[0]['driver_number']
-		cab_number=cab_info[0]['cab_no']
-		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
-	else:
-		return jsonify({'status':'cab not allocated'}),400	
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        cab_driver_info_detail=db.cab_driver_info_detail_table
+        emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+        login_cab_id=emp_cab_info[0]['login_cab']
+        # print("cab_id ================",login_cab_id)
+        if(emp_cab_info[0]['login'] != 0 and login_cab_id != 0):
+                cab_info=list(cab_driver_info_detail.find({'cab_id':login_cab_id}))
+                driver_name=cab_info[0]['driver_name']
+                driver_number=cab_info[0]['driver_number']
+                cab_number=cab_info[0]['cab_no']
+                return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+        else:
+            return jsonify({'status':'cab not allocated'}),400	
 
 @app.route('/show_cab_details_logout',methods=['POST'])
 def show_cab_details_logout():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	cab_driver_info_detail=db.cab_driver_info_detail_table
-	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
-	logout_cab_id=emp_cab_info[0]['logout_cab']
-	# print("cab_id ================",logout_cab_id)
-	if(emp_cab_info[0]['logout'] != 0 and logout_cab_id != 0):
-		cab_info=list(cab_driver_info_detail.find({'cab_id':logout_cab_id}))
-		driver_name=cab_info[0]['driver_name']
-		driver_number=cab_info[0]['driver_number']
-		cab_number=cab_info[0]['cab_no']
-		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
-	else:
-		return jsonify({'status':'cab not allocated'}),400	
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        cab_driver_info_detail=db.cab_driver_info_detail_table
+        emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+        logout_cab_id=emp_cab_info[0]['logout_cab']
+        # print("cab_id ================",logout_cab_id)
+        if(emp_cab_info[0]['logout'] != 0 and logout_cab_id != 0):
+                cab_info=list(cab_driver_info_detail.find({'cab_id':logout_cab_id}))
+                driver_name=cab_info[0]['driver_name']
+                driver_number=cab_info[0]['driver_number']
+                cab_number=cab_info[0]['cab_no']
+                return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+        else:
+            return jsonify({'status':'cab not allocated'}),400	
+
+# ML API (Using Saksham)
+@app.route('/nlp_engine',methods=['POST'])
+def classify_resume():
+    data = dict()
+    content, label = [], []
+    client = MongoClient()
+    db = client['employee_management_db']
+    ml_dataset = db.ml_data_table
+    data = ml_dataset.find_one()
+    del(data["_id"])
+    """
+    with open('final_data.json', 'r') as f:
+        data = json.load(f)
+    """
+    for each in data:
+        content.append(each)
+        label.append(data[each])
+
+    test = request.json['input_string']
+    print(type(test))
+    test = pre_process(test)
+    content.append(test)
+    label.append('CC')
+
+    df = pd.DataFrame([content, label]).T
+    df.columns= ['content', 'label']
+
+    LE = LabelEncoder()
+    df['label_num'] = LE.fit_transform(df['label'])
+
+    texts = df['content'].astype('str')
+
+    tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df = 2, max_df = .95)
+
+    X = tfidf_vectorizer.fit_transform(texts) #features
+
+    y = df['label_num'].values #target
+
+    test = X[3477]
+    y = y[:-1] 
+
+    lsa = TruncatedSVD(n_components=100,n_iter=10, random_state=3)
+
+    X = lsa.fit_transform(X)
+    #print("838")
+    test = X[-1]
+    X = X[:-1]
+
+    model = SGDClassifier(random_state=3, loss='log')
+    model.fit(X, y)
+
+    test = test.reshape(1, -1)
+
+    y_pred = model.predict(test)
+    mp = {0:"Cloud computing", 1:"Computer Graphics", 2:"Computer Networks", 3:"Machine Learning", 4:"Web Technology"}
+
+    output = mp[y_pred[0]]
+
+    return(jsonify(output)),200
+
+
 
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)
