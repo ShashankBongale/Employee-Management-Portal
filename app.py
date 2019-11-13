@@ -815,7 +815,7 @@ def classify_resume():
         label.append(data[each])
 
     test = request.json['input_string']
-    print(type(test))
+    #print(type(test))
     test = pre_process(test)
     content.append(test)
     label.append('CC')
@@ -854,7 +854,7 @@ def classify_resume():
 
     output = mp[y_pred[0]]
 
-    return(jsonify(output)),200
+    return(jsonify([output])),200
 
 
 
