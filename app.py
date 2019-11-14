@@ -546,7 +546,11 @@ def applybill():
     etype = emp_det['e_type']
     account_data = db.account_department_table.find_one({'e_type':etype})
     prev_reim = emp_sal['last_reim']
-    if(prev_reim == ""):
+    max_amt = account_data['reamt']
+    if(amount > max_amt):
+        data['status'] = "reject"
+        return_response = 200
+    elif(prev_reim == ""):
         data['status'] = "pending"
         return_response = 200
     else:
@@ -609,8 +613,19 @@ def process_bill():
     client = MongoClient()
     db = client['employee_management_db']
     bill_info = db.bills_table
+    emp_info = db.employee_details_table.find_one({'e_id':eid})
+    etype = emp_info["e_type"]
     bill_det = bill_info.find_one({"bill_id":bill_id})
     bill_amount = bill_det["bill_amount"]
+    emp_sal_det = db.salary_detail_table.find_one({'e_id':eid})
+    reim_amt = int(emp_sal_det["reimbursed_amt"])
+    account_data = db.account_department_table.find_one({'e_type':etype})
+    max_amt = int(account_data['reamt'])
+    if(reim_amt + int(bill_amount) > max_amt):
+        client.close()
+        bill_info.update({'bill_id':bill_id},{'$set':{'status':'rejected'}})
+        print("here")
+        return jsonify({}),400
     bill_info.update({'bill_id':bill_id},{'$set':{'status':bill_status}})
     if(bill_status == "approved"):
         now = datetime.datetime.now()
