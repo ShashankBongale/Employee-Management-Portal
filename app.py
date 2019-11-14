@@ -545,13 +545,25 @@ def applybill():
     emp_det = db.employee_details_table.find_one({'e_id':eid})
     etype = emp_det['e_type']
     account_data = db.account_department_table.find_one({'e_type':etype})
-    max_amount = int(account_data['reamt'])
-    if(amount + reim_amt > max_amount):
-        data['status'] = "rejected"
-        return_response = 400
-    else:
+    prev_reim = emp_sal['last_reim']
+    if(prev_reim == ""):
         data['status'] = "pending"
         return_response = 200
+    else:
+        prev_month = prev_reim.split('/')[1]
+        now = datetime.datetime.now()
+        month = str(now.month)
+        if(prev_month != month):
+            data['status'] = "pending"
+            return_response = 200
+        else:
+            max_amount = int(account_data['reamt'])
+            if(amount + reim_amt > max_amount):
+                data['status'] = "rejected"
+                return_response = 400
+            else:
+                data['status'] = "pending"
+                return_response = 200
     det.insert_one(data)
     client.close()
     return jsonify({}),return_response
