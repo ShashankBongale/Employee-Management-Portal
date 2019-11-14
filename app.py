@@ -633,7 +633,7 @@ def get_leave_status(empid):
     if(len(res)==0):
         output=["No leave Applications found"]
     else:
-        output = list(res[0]['status'])
+        output = [res[0]['status']]
     client.close()
     return jsonify(output),200
 
