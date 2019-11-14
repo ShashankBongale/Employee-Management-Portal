@@ -493,6 +493,17 @@ def displaySalary(empID):
     else:
         d["bonus_status"] = "false"
     d["bonus_amount"] = bonus_amount
+    res_new = db.salary_detail_table.find_one({"e_id":empID})
+    prev_reimb = res_new['last_reim']
+    if(prev_reimb == ""):
+        d["bill_reimb"] = "false"
+    else:
+        prev_month = prev_reimb.split('/')[1]
+        if(prev_month == month):
+            d["bill_reimb"] = "true"
+        else:
+            d["bill_reimb"] = "false"
+    d["reimbursed_amount"] = res_new["reimbursed_amt"]
     return jsonify(d),200
 
 ###Bill APIs ###
