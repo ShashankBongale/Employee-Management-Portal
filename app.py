@@ -167,7 +167,7 @@ def register():
         data = {'e_id':id,'user_name':usr,'e_contact':number,'e_email':email,'e_type':etype,'dept_id':dept,'leave_left':leaves,'approver_id':approver}
         db.employee_details_table.insert_one(data)
         #insert into salary_detail_table
-        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':0,'last_bonus_credited':""}
+        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':"0",'last_reim':"",'last_bonus_credited':""}
         db.salary_detail_table.insert_one(data)
         client.close()
         return jsonify({}),200
@@ -516,6 +516,7 @@ def applybill():
     data['bill_amount'] = str(amount)
     data['e_id'] = eid
     data['bill_id'] = str(bill_id)
+    """
     emp_det = db.employee_details_table
     res = list(emp_det.find({'e_id':eid}))
     rem_amt = int(res[0]['reamt'])
@@ -526,6 +527,20 @@ def applybill():
     else:
         data['status'] = "rejected"
         return_response = 400
+    """
+    emp_sal = db.salary_detail_table.find_one({'e_id':eid})
+    reim_amt = int(emp_sal["reimbursed_amt"])
+    #code for etype
+    emp_det = db.employee_details_table.find_one({'e_id':eid})
+    etype = emp_det['e_type']
+    account_data = db.account_department_table.find_one({'e_type':etype})
+    max_amount = int(account_data['reamt'])
+    if(amount + reim_amt > max_amount):
+        data['status'] = "rejected"
+        return_response = 400
+    else:
+        data['status'] = "pending"
+        return_response = 200
     det.insert_one(data)
     client.close()
     return jsonify({}),return_response
@@ -564,12 +579,34 @@ def view_all_bills():
 
 @app.route('/process_bill',methods=['POST'])
 def process_bill():
+    eid = request.json['e_id']
     bill_id = request.json['bill_id']
+    #bill_amount = request.json['bill_amount']
     bill_status = request.json['bill_status']
     client = MongoClient()
     db = client['employee_management_db']
     bill_info = db.bills_table
+    bill_det = bill_info.find_one({"bill_id":bill_id})
+    bill_amount = bill_det["bill_amount"]
     bill_info.update({'bill_id':bill_id},{'$set':{'status':bill_status}})
+    if(bill_status == "approved"):
+        now = datetime.datetime.now()
+        day = str(now.day)
+        month = str(now.month)
+        year = str(now.year)
+        today_date = day + "/" + month + "/" + year
+        salary_info = db.salary_detail_table.find_one({'e_id':eid})
+        last_reim = salary_info["last_reim"]
+        previous_amount = int(salary_info["reimbursed_amt"])
+        if(last_reim == ""):
+            updated_amount = bill_amount
+        else:
+            prev_month = last_reim.split('/')[1]
+            if(prev_month == month):
+                updated_amount = str(int(bill_amount) + int(previous_amount))
+            else:
+                updated_amount = bill_amount
+        db.salary_detail_table.update({'e_id':eid},{"$set":{'last_reim':today_date,"reimbursed_amt":updated_amount}})
     client.close()
     return jsonify({}),200
 
