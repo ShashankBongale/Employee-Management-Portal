@@ -60,24 +60,24 @@ leave_col.insert_many([data1,data2,data3,data4])
 
 #6.Account Department
 account_det=db.account_department_table
-data1={'e_type':'DEV','Salary':'60,000','Bonus':'1,08,000','reamt':'4000'}
-data2={'e_type':'MANAGER','Salary':'90,000','Bonus':'1,62,000','reamt':'6000'}
-data3={'e_type':'HOD','Salary':'1,20,0000','Bonus':'2,16,000','reamt':'8000'}
-data4={'e_type':'ACCOUNTANT','Salary':'65,000','Bonus':'1,17,000','reamt':'4000'}
-data5={'e_type':'HR','Salary':'70,000','Bonus':'1,26,000','reamt':'4000'}
+data1={'e_type':'DEV','Salary':'60000','Bonus':'108000','reamt':'4000'}
+data2={'e_type':'MANAGER','Salary':'90000','Bonus':'162000','reamt':'6000'}
+data3={'e_type':'HOD','Salary':'1200000','Bonus':'216000','reamt':'8000'}
+data4={'e_type':'ACCOUNTANT','Salary':'65000','Bonus':'117000','reamt':'4000'}
+data5={'e_type':'HR','Salary':'70000','Bonus':'126000','reamt':'4000'}
 account_det.insert_many([data1,data2,data3,data4,data5])
 
 #7.Salary
 salary_det=db.salary_detail_table
-data1={'e_id':'2019DEV001','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
-data2={'e_id':'2019DEV002','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
-data3={'e_id':'2019DEV003','last_salary_credited':'2/09/2019','reimbursed_amt':'2500','last_reim':'2/09/2019','last_bonus_credited':""}
-data4={'e_id':'2019FIN001','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
-data5={'e_id':'2019FIN002','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
-data6={'e_id':'2019FIN003','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
-data7={'e_id':'2019HRD001','last_salary_credited':'2/09/2019','reimbursed_amt':'4500','last_reim':'2/09/2019','last_bonus_credited':""}
-data8={'e_id':'2019HRD002','last_salary_credited':'2/09/2019','reimbursed_amt':'8000','last_reim':'2/09/2019','last_bonus_credited':""}
-data9={'e_id':'2019HRD003','last_salary_credited':'2/09/2019','reimbursed_amt':'6000','last_reim':'2/09/2019','last_bonus_credited':""}
+data1={'e_id':'2019DEV001','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data2={'e_id':'2019DEV002','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data3={'e_id':'2019DEV003','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data4={'e_id':'2019FIN001','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data5={'e_id':'2019FIN002','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data6={'e_id':'2019FIN003','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data7={'e_id':'2019HRD001','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data8={'e_id':'2019HRD002','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
+data9={'e_id':'2019HRD003','last_salary_credited':'2/9/2019','reimbursed_amt':'0','last_reim':'2/9/2019','last_bonus_credited':"2/9/2019"}
 salary_det.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 
 #8.Bills
