@@ -546,7 +546,7 @@ def applybill():
     etype = emp_det['e_type']
     account_data = db.account_department_table.find_one({'e_type':etype})
     prev_reim = emp_sal['last_reim']
-    max_amt = account_data['reamt']
+    max_amt = int(account_data['reamt'])
     if(amount > max_amt):
         data['status'] = "reject"
         return_response = 200
@@ -647,6 +647,21 @@ def process_bill():
         db.salary_detail_table.update({'e_id':eid},{"$set":{'last_reim':today_date,"reimbursed_amt":updated_amount}})
     client.close()
     return jsonify({}),200
+
+@app.route('/bill_rem/<string:empid>',methods=['GET'])
+def get_rem_bill(empid):
+    client = MongoClient()
+    db = client['employee_management_db']
+    emp_info = db.employee_details_table.find_one({'e_id':empid})
+    etype = emp_info['e_type']
+    account_info = db.account_department_table.find_one({'e_type':etype})
+    max_amount = int(account_info['reamt'])
+    emp_sal = db.salary_detail_table.find_one({'e_id':empid})
+    amount_now = int(emp_sal['reimbursed_amt'])
+    rem = str(max_amount - amount_now)
+    rem_dict = dict()
+    rem_dict["rem"] = rem
+    return jsonify(rem_dict),200
 
 #Get leave application status for the employee
 #Pass E_id as url parameter
