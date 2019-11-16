@@ -73,6 +73,7 @@ def trial_connection():
 # Return:
 @app.route('/update_calendar',methods=['POST'])
 def update_calendar_info():
+    print(request.json)
     deptId = request.json["dept_id"]
     eType = request.json["e_type"]
     client = MongoClient()
@@ -585,8 +586,9 @@ def view_bill_status(empid):
         temp['bill_amount'] = i['bill_amount']
         temp['status'] = i['status']
         temp['bill_id'] = i['bill_id']
+        temp['e_id'] = i['e_id']
         bills.append(temp)
-    print(bills)
+    #print(bills)
     client.close()
     return jsonify(bills),200
 
