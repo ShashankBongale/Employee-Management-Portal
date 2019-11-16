@@ -32,6 +32,9 @@ import re
 from datetime import date
 import datetime
 import pickle
+import random
+from datetime import timedelta
+time_coef = 250
 import pandas as pd
 import numpy as np
 import json
@@ -53,11 +56,11 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    response.headers.add('Origin','127.0.0.1')
-    return response
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Origin','127.0.0.1')
+  return response
 
 @app.route('/check',methods=['GET'])
 def trial_connection():
@@ -787,7 +790,7 @@ def schedule_logout(data):
         print("empty")
         cab_data = []
     else:
-        data.sort(key=lambda x:x[3],reverse=True)
+        data.sort(key=lambda x:x[3])
         cab_id = 1
         cab_data = []
         ind = 0
@@ -870,42 +873,42 @@ def cancel_logout():
 
 @app.route('/show_cab_details_login',methods=['POST'])
 def show_cab_details_login():
-        emp_id=request.json['e_id']
-        client=MongoClient()
-        db=client['employee_management_db']
-        emp_cab_det=db.emp_cab_detail_table
-        cab_driver_info_detail=db.cab_driver_info_detail_table
-        emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
-        login_cab_id=emp_cab_info[0]['login_cab']
-        # print("cab_id ================",login_cab_id)
-        if(emp_cab_info[0]['login'] != 0 and login_cab_id != 0):
-                cab_info=list(cab_driver_info_detail.find({'cab_id':login_cab_id}))
-                driver_name=cab_info[0]['driver_name']
-                driver_number=cab_info[0]['driver_number']
-                cab_number=cab_info[0]['cab_no']
-                return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
-        else:
-            return jsonify({'status':'cab not allocated'}),400
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	cab_driver_info_detail=db.cab_driver_info_detail_table
+	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+	login_cab_id=emp_cab_info[0]['login_cab']
+	# print("cab_id ================",login_cab_id)
+	if(emp_cab_info[0]['login'] != 0 and login_cab_id != 0):
+		cab_info=list(cab_driver_info_detail.find({'cab_id':login_cab_id}))
+		driver_name=cab_info[0]['driver_name']
+		driver_number=cab_info[0]['driver_number']
+		cab_number=cab_info[0]['cab_no']
+		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+	else:
+		return jsonify({'status':400}),200
 
 @app.route('/show_cab_details_logout',methods=['POST'])
 def show_cab_details_logout():
-        emp_id=request.json['e_id']
-        client=MongoClient()
-        db=client['employee_management_db']
-        emp_cab_det=db.emp_cab_detail_table
-        cab_driver_info_detail=db.cab_driver_info_detail_table
-        emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
-        logout_cab_id=emp_cab_info[0]['logout_cab']
-        # print("cab_id ================",logout_cab_id)
-        if(emp_cab_info[0]['logout'] != 0 and logout_cab_id != 0):
-                cab_info=list(cab_driver_info_detail.find({'cab_id':logout_cab_id}))
-                driver_name=cab_info[0]['driver_name']
-                driver_number=cab_info[0]['driver_number']
-                cab_number=cab_info[0]['cab_no']
-                return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
-        else:
-            return jsonify({'status':'cab not allocated'}),400
-
+	emp_id=request.json['e_id']
+	client=MongoClient()
+	db=client['employee_management_db']
+	emp_cab_det=db.emp_cab_detail_table
+	cab_driver_info_detail=db.cab_driver_info_detail_table
+	emp_cab_info=list(emp_cab_det.find({'e_id':emp_id}))
+	logout_cab_id=emp_cab_info[0]['logout_cab']
+	# print("cab_id ================",logout_cab_id)
+	if(emp_cab_info[0]['logout'] != 0 and logout_cab_id != 0):
+		cab_info=list(cab_driver_info_detail.find({'cab_id':logout_cab_id}))
+		driver_name=cab_info[0]['driver_name']
+		driver_number=cab_info[0]['driver_number']
+		cab_number=cab_info[0]['cab_no']
+		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
+	else:
+		return jsonify({'status':400}),200
+  
 # ML API (Using Saksham)
 @app.route('/nlp_engine',methods=['POST'])
 def classify_resume():
