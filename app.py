@@ -16,8 +16,8 @@
 13. @app.route('/approve_bonus',methods=['POST'])
 14. @app.route('/check_salary_status',methods=['GET'])
 15. @app.route('/update_salary_bonus',methods=['POST'])
-16. @app.route('/get_dept_id/<string:e_id>', methods=['GET']) 
-17. @app.route('/get_e_type/<string:e_id>', methods=['GET']) 
+16. @app.route('/get_dept_id/<string:e_id>', methods=['GET'])
+17. @app.route('/get_e_type/<string:e_id>', methods=['GET'])
 18. @app.route('/display_salary/<string:empID>',methods=['GET'])
 19. @app.route('/apply_bill',methods=['POST'])
 20. @app.route('/view_bill_status/<string:empid>',methods=['GET'])
@@ -32,6 +32,11 @@ import re
 from datetime import date
 import datetime
 import pickle
+
+import random
+from datetime import timedelta
+time_coef = 250
+
 app = Flask(__name__)
 @app.after_request
 def after_request(response):
@@ -40,7 +45,7 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   response.headers.add('Origin','127.0.0.1')
   return response
- 
+
 @app.route('/check',methods=['GET'])
 def trial_connection():
     trial_list = dict()
@@ -52,7 +57,7 @@ def trial_connection():
 # Find the corresponding record and update the row
 # if record doesn't exist then create a new record and insert it
 # Body of the request: {"dept_id": ,"e_type": ,"casual": ,"earned": ,"medical": }
-# Return: 
+# Return:
 @app.route('/update_calendar',methods=['POST'])
 def update_calendar_info():
     deptId = request.json["dept_id"]
@@ -274,7 +279,7 @@ def approve_leave():
 #Part 1 of initiate-salary-process which returns the json of e-types to the frontend
 #Input nothing
 #Output -> ["DEV","HR",...]
-@app.route('/display_etypes',methods=['GET']) 
+@app.route('/display_etypes',methods=['GET'])
 def display_etypes():
     client = MongoClient()
     db = client['employee_management_db']
@@ -372,7 +377,7 @@ def approvebonus():
 # Input is given through the url
 # Api checks the db and returns "credired"/"pending"
 @app.route('/check_salary_status/<string:eid>',methods=['GET'])
-def check_salary_status(eid): 
+def check_salary_status(eid):
     client = MongoClient()
     db = client['employee_management_db']
     sal = db.salary_detail_table
@@ -411,7 +416,7 @@ def update_sb():
 # This api return department id given an employee id
 # Input -> http://127.0.0.1:5000/employee_id
 # output -> Department ID
-@app.route('/get_dept_id/<string:e_id>', methods=['GET'])   
+@app.route('/get_dept_id/<string:e_id>', methods=['GET'])
 def get_dept_id(e_id):
     client = MongoClient()
     db = client['employee_management_db']
@@ -426,7 +431,7 @@ def get_dept_id(e_id):
 # This api returns the employee type given an employee id
 # Input -> http://127.0.0.1:5000/employee_id
 # output -> DEV/MANAGER/HOD
-@app.route('/get_e_type/<string:e_id>', methods=['GET'])   
+@app.route('/get_e_type/<string:e_id>', methods=['GET'])
 def get_e_type(e_id):
     client = MongoClient()
     db = client['employee_management_db']
@@ -568,7 +573,7 @@ def login():
     data_5 = [i for i in data if(i[4] == 5)]
     data_8 = [i for i in data if(i[4] == 8)]
     data_11 = [i for i in data if(i[4] == 11)]
-    
+
     cab_data = schedule_login(data_5)
     for x in data_5:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'login_cab':x[6]}})
@@ -622,11 +627,11 @@ def schedule_login(data):
             cab["endTime"] = str(timedelta(minutes=(login*60)))[:4]
             cab_data.append(cab)
             for y in range(ind,len(data))[0:3]:
-                data[y][6] =  cab_id 
+                data[y][6] =  cab_id
             cab_id += 1
             ind+=3
-    return cab_data        
-        
+    return cab_data
+
 
 @app.route('/schedule_logout',methods=['POST'])
 def logout():
@@ -639,7 +644,7 @@ def logout():
     data_15 = [i for i in data if(i[5] == 5)]
     data_18 = [i for i in data if(i[5] == 18)]
     data_21 = [i for i in data if(i[5] == 21)]
-    
+
     cab_data = schedule_logout(data_15)
     for x in data_15:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
@@ -647,7 +652,7 @@ def logout():
     cab_data = schedule_logout(data_18)
     for x in data_18:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
-        
+
     cab_data = schedule_logout(data_21)
     for x in data_21:
         employee_cab_details.update({'e_id':x[0]},{"$set": {'logout_cab':x[7]}})
@@ -659,7 +664,7 @@ def schedule_logout(data):
         print("empty")
         cab_data = []
     else:
-        data.sort(key=lambda x:x[3],reverse=True)
+        data.sort(key=lambda x:x[3])
         cab_id = 1
         cab_data = []
         ind = 0
@@ -693,7 +698,7 @@ def schedule_logout(data):
             cab["endTime"] = time
             cab_data.append(cab)
             for y in range(ind,len(data))[0:3]:
-                data[y][7] =  cab_id 
+                data[y][7] =  cab_id
             cab_id += 1
             ind+=3
     return cab_data
@@ -757,7 +762,7 @@ def show_cab_details_login():
 		cab_number=cab_info[0]['cab_no']
 		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
 	else:
-		return jsonify({'status':'cab not allocated'}),400	
+		return jsonify({'status':400}),200
 
 @app.route('/show_cab_details_logout',methods=['POST'])
 def show_cab_details_logout():
@@ -776,7 +781,7 @@ def show_cab_details_logout():
 		cab_number=cab_info[0]['cab_no']
 		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
 	else:
-		return jsonify({'status':'cab not allocated'}),400	
+		return jsonify({'status':400}),200
 
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)
