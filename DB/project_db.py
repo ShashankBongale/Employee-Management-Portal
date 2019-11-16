@@ -32,7 +32,7 @@ data4 = {'dept_id':'FINDEP','e_type':'ACCOUNTANT','casual':'8','earned':'10','me
 data5 = {'dept_id':'FINDEP','e_type':'MANAGER','casual':'10','earned':'12','medical':'8'}
 data6 = {'dept_id':'FINDEP','e_type':'HOD','casual':'12','earned':'14','medical':'10'}
 data7 = {'dept_id':'HRDEPT','e_type':'HR','casual':'8','earned':'10','medical':'6'}
-data8 = {'dept_id':'HRDEPT','e_type':'HR MANAGER','casual':'10','earned':'12','medical':'8'}
+data8 = {'dept_id':'HRDEPT','e_type':'MANAGER','casual':'10','earned':'12','medical':'8'}
 data9 = {'dept_id':'HRDEPT','e_type':'HOD','casual':'12','earned':'14','medical':'10'}
 calendar_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 
@@ -82,7 +82,7 @@ salary_det.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 
 #8.Bills
 bills_info = db.bills_table
-data1 = {'e_id':'2019DEV001','bill_id':'1','bill_image':'','bill_amount':'0','status':'pending'}
+data1 = {'e_id':'2019DEV999','bill_id':'1','bill_image':'','bill_amount':'0','status':'pending'}
 bills_info.insert_one(data1)
 
 #9.Data for ML
