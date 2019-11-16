@@ -32,10 +32,26 @@ import re
 from datetime import date
 import datetime
 import pickle
-
 import random
 from datetime import timedelta
 time_coef = 250
+import pandas as pd
+import numpy as np
+import json
+import re
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.linear_model import SGDClassifier
+import string
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tag import StanfordNERTagger
+import warnings
+from ml_module import POS_remove,pre_process
+warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 @app.after_request
@@ -60,6 +76,7 @@ def trial_connection():
 # Return:
 @app.route('/update_calendar',methods=['POST'])
 def update_calendar_info():
+    print(request.json)
     deptId = request.json["dept_id"]
     eType = request.json["e_type"]
     client = MongoClient()
@@ -154,7 +171,7 @@ def register():
         data = {'e_id':id,'user_name':usr,'e_contact':number,'e_email':email,'e_type':etype,'dept_id':dept,'leave_left':leaves,'approver_id':approver}
         db.employee_details_table.insert_one(data)
         #insert into salary_detail_table
-        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':0,'last_bonus_credited':""}
+        data = {'e_id':id,'last_salary_credited':"",'reimbursed_amt':"0",'last_reim':"",'last_bonus_credited':""}
         db.salary_detail_table.insert_one(data)
         client.close()
         return jsonify({}),200
@@ -315,13 +332,13 @@ def get_applications(approver_id):
     client = MongoClient()
     db = client['employee_management_db']
     salary_apps = db.leave_collection_table
-    res = list(salary_apps.find())
+    res1 = list(salary_apps.find())
     leave_applications = list()
-    for i in res:
+    for i in res1:
         e_id = i['e_id']
         emp_db = db.employee_details_table
         res = list(emp_db.find({'e_id':e_id}))
-        if(res[0]['approver_id'] == approver_id):
+        if(res[0]['approver_id'] == approver_id and i['status'] == 'pending'):
             data = dict()
             data['e_id'] = i['e_id']
             data['type'] = i['type']
@@ -480,6 +497,17 @@ def displaySalary(empID):
     else:
         d["bonus_status"] = "false"
     d["bonus_amount"] = bonus_amount
+    res_new = db.salary_detail_table.find_one({"e_id":empID})
+    prev_reimb = res_new['last_reim']
+    if(prev_reimb == ""):
+        d["bill_reimb"] = "false"
+    else:
+        prev_month = prev_reimb.split('/')[1]
+        if(prev_month == month):
+            d["bill_reimb"] = "true"
+        else:
+            d["bill_reimb"] = "false"
+    d["reimbursed_amount"] = res_new["reimbursed_amt"]
     return jsonify(d),200
 
 ###Bill APIs ###
@@ -503,6 +531,7 @@ def applybill():
     data['bill_amount'] = str(amount)
     data['e_id'] = eid
     data['bill_id'] = str(bill_id)
+    """
     emp_det = db.employee_details_table
     res = list(emp_det.find({'e_id':eid}))
     rem_amt = int(res[0]['reamt'])
@@ -513,6 +542,36 @@ def applybill():
     else:
         data['status'] = "rejected"
         return_response = 400
+    """
+    emp_sal = db.salary_detail_table.find_one({'e_id':eid})
+    reim_amt = int(emp_sal["reimbursed_amt"])
+    #code for etype
+    emp_det = db.employee_details_table.find_one({'e_id':eid})
+    etype = emp_det['e_type']
+    account_data = db.account_department_table.find_one({'e_type':etype})
+    prev_reim = emp_sal['last_reim']
+    max_amt = int(account_data['reamt'])
+    if(amount > max_amt):
+        data['status'] = "reject"
+        return_response = 400
+    elif(prev_reim == ""):
+        data['status'] = "pending"
+        return_response = 200
+    else:
+        prev_month = prev_reim.split('/')[1]
+        now = datetime.datetime.now()
+        month = str(now.month)
+        if(prev_month != month):
+            data['status'] = "pending"
+            return_response = 200
+        else:
+            max_amount = int(account_data['reamt'])
+            if(amount + reim_amt > max_amount):
+                data['status'] = "rejected"
+                return_response = 400
+            else:
+                data['status'] = "pending"
+                return_response = 200
     det.insert_one(data)
     client.close()
     return jsonify({}),return_response
@@ -529,7 +588,10 @@ def view_bill_status(empid):
         temp['bill_image'] = i['bill_image']
         temp['bill_amount'] = i['bill_amount']
         temp['status'] = i['status']
+        temp['bill_id'] = i['bill_id']
+        temp['e_id'] = i['e_id']
         bills.append(temp)
+    #print(bills)
     client.close()
     return jsonify(bills),200
 
@@ -551,14 +613,78 @@ def view_all_bills():
 
 @app.route('/process_bill',methods=['POST'])
 def process_bill():
+    eid = request.json['e_id']
     bill_id = request.json['bill_id']
+    #bill_amount = request.json['bill_amount']
     bill_status = request.json['bill_status']
     client = MongoClient()
     db = client['employee_management_db']
     bill_info = db.bills_table
+    emp_info = db.employee_details_table.find_one({'e_id':eid})
+    etype = emp_info["e_type"]
+    bill_det = bill_info.find_one({"bill_id":bill_id})
+    bill_amount = bill_det["bill_amount"]
+    emp_sal_det = db.salary_detail_table.find_one({'e_id':eid})
+    reim_amt = int(emp_sal_det["reimbursed_amt"])
+    account_data = db.account_department_table.find_one({'e_type':etype})
+    max_amt = int(account_data['reamt'])
+    if(reim_amt + int(bill_amount) > max_amt):
+        client.close()
+        bill_info.update({'bill_id':bill_id},{'$set':{'status':'rejected'}})
+        print("here")
+        return jsonify({}),400
     bill_info.update({'bill_id':bill_id},{'$set':{'status':bill_status}})
+    if(bill_status == "approved"):
+        now = datetime.datetime.now()
+        day = str(now.day)
+        month = str(now.month)
+        year = str(now.year)
+        today_date = day + "/" + month + "/" + year
+        salary_info = db.salary_detail_table.find_one({'e_id':eid})
+        last_reim = salary_info["last_reim"]
+        previous_amount = int(salary_info["reimbursed_amt"])
+        if(last_reim == ""):
+            updated_amount = bill_amount
+        else:
+            prev_month = last_reim.split('/')[1]
+            if(prev_month == month):
+                updated_amount = str(int(bill_amount) + int(previous_amount))
+            else:
+                updated_amount = bill_amount
+        db.salary_detail_table.update({'e_id':eid},{"$set":{'last_reim':today_date,"reimbursed_amt":updated_amount}})
     client.close()
     return jsonify({}),200
+
+@app.route('/bill_rem/<string:empid>',methods=['GET'])
+def get_rem_bill(empid):
+    client = MongoClient()
+    db = client['employee_management_db']
+    emp_info = db.employee_details_table.find_one({'e_id':empid})
+    etype = emp_info['e_type']
+    account_info = db.account_department_table.find_one({'e_type':etype})
+    max_amount = int(account_info['reamt'])
+    emp_sal = db.salary_detail_table.find_one({'e_id':empid})
+    amount_now = int(emp_sal['reimbursed_amt'])
+    rem = str(max_amount - amount_now)
+    rem_dict = dict()
+    rem_dict["rem"] = rem
+    return jsonify(rem_dict),200
+
+#Get leave application status for the employee
+#Pass E_id as url parameter
+#If leave has not been applied display - No leaves applied
+@app.route('/get_leave_status/<string:empid>',methods=['GET'])
+def get_leave_status(empid):
+    client = MongoClient()
+    db = client['employee_management_db']
+    leavedata = db.leave_collection_table
+    res = list(leavedata.find({'e_id':empid}))
+    if(len(res)==0):
+        output=["No leave Applications found"]
+    else:
+        output = [res[0]['status']]
+    client.close()
+    return jsonify(output),200
 
 # cab APIs
 
@@ -705,45 +831,45 @@ def schedule_logout(data):
 
 @app.route('/book_login',methods=['POST'])
 def book_login():
-	emp_id=request.json["e_id"]
-	login_time=request.json["login"]
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':login_time}})
+        emp_id=request.json["e_id"]
+        login_time=request.json["login"]
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login':login_time}})
 
-	return jsonify({'status':'booked successfully'}),200
+        return jsonify({'status':'booked successfully'}),200
 
 @app.route('/book_logout',methods=['POST'])
 def book_logout():
-	emp_id=request.json["e_id"]
-	logout_time=request.json["logout"]
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':logout_time}})
+        emp_id=request.json["e_id"]
+        logout_time=request.json["logout"]
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':logout_time}})
 
-	return jsonify({'status':'booked successfully'}),200
+        return jsonify({'status':'booked successfully'}),200
 
 @app.route('/cancel_login',methods=['POST'])
 def cancel_login():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login':0}})
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'login_cab':0}})
-	return jsonify({'status':'cancelled'}),200
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login':0}})
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'login_cab':0}})
+        return jsonify({'status':'cancelled'}),200
 
 @app.route('/cancel_logout',methods=['POST'])
 def cancel_logout():
-	emp_id=request.json['e_id']
-	client=MongoClient()
-	db=client['employee_management_db']
-	emp_cab_det=db.emp_cab_detail_table
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':0}})
-	emp_cab_det.update({'e_id':emp_id},{"$set": {'logout_cab':0}})
-	return jsonify({'status':'cancelled'}),200
+        emp_id=request.json['e_id']
+        client=MongoClient()
+        db=client['employee_management_db']
+        emp_cab_det=db.emp_cab_detail_table
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout':0}})
+        emp_cab_det.update({'e_id':emp_id},{"$set": {'logout_cab':0}})
+        return jsonify({'status':'cancelled'}),200
 
 @app.route('/show_cab_details_login',methods=['POST'])
 def show_cab_details_login():
@@ -782,6 +908,66 @@ def show_cab_details_logout():
 		return jsonify({'driver_name':driver_name,'driver_number':driver_number,'cab_number':cab_number}),200
 	else:
 		return jsonify({'status':400}),200
+  
+# ML API (Using Saksham)
+@app.route('/nlp_engine',methods=['POST'])
+def classify_resume():
+    data = dict()
+    content, label = [], []
+    client = MongoClient()
+    db = client['employee_management_db']
+    ml_dataset = db.ml_data_table
+    data = ml_dataset.find_one()
+    del(data["_id"])
+    """
+    with open('final_data.json', 'r') as f:
+        data = json.load(f)
+    """
+    for each in data:
+        content.append(each)
+        label.append(data[each])
+
+    test = request.json['input_string']
+    #print(type(test))
+    test = pre_process(test)
+    content.append(test)
+    label.append('CC')
+
+    df = pd.DataFrame([content, label]).T
+    df.columns= ['content', 'label']
+
+    LE = LabelEncoder()
+    df['label_num'] = LE.fit_transform(df['label'])
+
+    texts = df['content'].astype('str')
+
+    tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df = 2, max_df = .95)
+
+    X = tfidf_vectorizer.fit_transform(texts) #features
+
+    y = df['label_num'].values #target
+
+    test = X[3477]
+    y = y[:-1]
+
+    lsa = TruncatedSVD(n_components=100,n_iter=10, random_state=3)
+
+    X = lsa.fit_transform(X)
+    #print("838")
+    test = X[-1]
+    X = X[:-1]
+
+    model = SGDClassifier(random_state=3, loss='log')
+    model.fit(X, y)
+
+    test = test.reshape(1, -1)
+
+    y_pred = model.predict(test)
+    mp = {0:"Cloud computing", 1:"Computer Graphics", 2:"Computer Networks", 3:"Machine Learning", 4:"Web Technology"}
+
+    output = mp[y_pred[0]]
+
+    return(jsonify([output])),200
 
 if __name__ == '__main__':
     app.run("0.0.0.0",port=5000)

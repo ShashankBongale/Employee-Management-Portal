@@ -1,0 +1,423 @@
+  
+
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html,body{
+    height:100%;
+    font-size: 16px;
+    background-color: white;
+  }
+  
+  img{
+    max-width: 100%;
+  }
+
+  .DayPicker{
+    background-color: azure;
+    margin-left: 5%;
+  }
+
+  .pushtoright{
+    width: 50%;
+    display: grid;
+    float: right;
+    margin-right: 20%;
+  }
+  .put_in_center{
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    height: 85%;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 2%;
+  
+  }
+  
+  .navbar-default{
+    border : 0;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 15px 20px;
+  }
+  
+  .navbar-brand>.logo{
+    width: 100px;
+  }
+  
+  .navbar-right{
+    margin-top: 15px;
+  }
+  
+  .navbar-right>li>a{
+    color: #22d5c3 !important;
+    font-weight: bold;
+    font-family: Manrope;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .navbar-default .navbar-toggle {
+    border: none;
+  }
+  
+  .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+    background-color: transparent;
+  }
+  
+  .icon-bar{
+    background-color: #22d5c3 !important;
+  }
+  
+  .icon-bar:nth-child(2){
+    width: 90%;
+  } 
+  
+  .icon-bar:nth-child(3){
+    width: 60%;
+  } 
+  
+  .App{
+    background-color: #1c1052;
+    height:100vh;
+  }
+  
+  .blog-name{
+    color: #fff;
+    font-family: Wavehaus;
+    font-weight: bold;
+    margin-top:20vh;
+    font-size: 4em;
+  }
+  
+  .contact-h1{
+    color: #fff;
+    font-family: Wavehaus;
+    font-weight: bold;
+    margin-top:1px;
+    font-size: 2em;
+  }
+  
+  input[type=file] {
+    padding: 6px;
+  }
+  
+  .contact-img{
+    margin-top:10vh;
+  }
+  
+  .about{
+    font-family: "Manrope";
+    color: #fff;
+  }
+  
+  .start{
+    color: #1c1052;
+    background-color: #fff;
+    font-family: "Manrope";
+    text-decoration: none !important;
+    font-weight: bold;
+    padding:8px 12px; 
+    border-radius: 5px;
+    box-shadow: 5px 5px 25px 0 rgba(0,0,0,0.2);
+  }
+  
+  .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: #1c1052;
+  }
+  
+  /* blog css */
+  
+  .thumbnail{
+    background-color: #241664;
+    border:none;
+    color:#fff;
+    font-family: Manrope;
+    padding: 10px;
+    box-shadow: 5px 5px 25px 0 rgba(0,0,0,0.07);
+  }
+  
+  h4{
+    font-weight: bold;
+    font-family: Manrope;
+  }
+  
+  .social{
+    color: #f6f8f8;
+    font-weight: bold;
+    font-family: Wavehaus;
+  }
+  
+  small{
+    font-size: 12px;
+  }
+  
+  .cards>img{
+    height: 225px;
+  }
+  
+  .cards{
+    height: 375px;
+  }
+  
+  .read-more{
+    background-color: #1c1052;
+    color:#22d5c3;
+    padding: 4px 10px;
+    font-family: Manrope;
+    border-radius: 4px;
+  }
+  
+  /* blog post */
+  .article-img{
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .latest,.latest>a{
+    list-style: none;
+    margin:15px auto;
+    color: #22d5c3;
+  }
+  
+  h3{
+    font-family: Wavehaus;
+    color: #fff;
+  }
+  
+  .loading{
+    display: block;
+    margin: 40vh auto;
+  }
+  
+  .search-img{
+    display: block;
+    margin: 5px auto;
+    width: 40%
+  }
+  
+  .searchbar{
+    background-color: #241664;
+    border: none;
+    box-shadow: 5px 5px 25px 0 rgba(0,0,0,0.07);
+    padding:15px;
+    font-family: manrope;
+    color: #22d5c3 !important;
+    margin-bottom: 25px;
+  }
+  
+  
+  
+  label{
+    color: black;
+    font-family: Manrope;
+  }
+  
+  textarea{
+    resize: vertical;
+  }
+  
+  input[type="submit"]{
+    background-color: rgb(60, 61, 109);
+    padding: 8px 15px;
+    box-shadow: 5px 5px 25px 0 rgba(0,0,0,0.07);
+    border-radius: 5px;
+    color: white;
+    border : none;
+    font-weight: bold;
+    font-family: manrope;
+  }
+  
+  .loginform{
+    margin-top: 20vh;
+  }
+  
+  .loginbar{
+    background-color: #241664;
+    border: none;
+    box-shadow: 5px 5px 25px 0 rgba(0,0,0,0.07);
+    padding:15px;
+    font-family: manrope;
+    color: #22d5c3 !important;
+    margin-bottom: 25px;
+  }
+  
+
+  
+  .footer{
+    background-color:#241664;
+    color: #22d5c3;
+    width: 100%;
+    position: relative;
+    display: none;
+    bottom: 0;
+    font-family: manrope;
+    padding: 5px !important;
+  }
+  
+  @media only screen and (max-width:768px){
+    .navbar-default{
+      padding: 5px;
+    }
+    .navbar-default .navbar-toggle {
+      margin-top:25px;
+    }
+    .cards>img{
+      height: auto;
+    }
+    
+    .cards{
+      height: auto;
+    }
+    .blog-name{
+      margin-top:15px;
+      font-size: 2.65em;
+    }
+    .contact-h1{
+      margin-top: 25px;
+      font-size: 2.15em;
+    }
+    .contact-img{
+      margin-top:0
+    }
+    .about{
+      padding-bottom: 10px;
+    }
+    .search-img{
+      width: 80%;
+      margin: 25px auto;
+    }
+    .loginform{
+      margin: 5px auto;
+    }
+    .footer{
+      display: block;
+    }
+  }
+  
+  @media only screen and (min-width:769px) and (max-width:991px){
+    .hero-img{
+      margin-top: 5vh;
+    }
+    .contact-h1,.blog-name{
+      font-size: 5em;
+      margin-top:25px
+    }
+    .about{
+      margin-bottom: 25px;
+    }
+  }
+  
+  @media only screen and (min-width:992px) and (max-width:1199px){
+    .hero-img{
+      margin-top: 15vh;
+    }
+    .contact-h1{
+      font-size: 4em;
+    }
+  }
+  
+  @media only screen and (min-width:1440px){
+    .hero-img{
+      margin-top:13vh;
+    }
+    .blog-name{
+      margin-top:25vh;
+      font-size: 4.5em;
+    }
+    .contact-h1{
+      margin-top:10vh;
+      font-size: 3.5em;
+    }
+    .contact-img{
+      margin-top:16vh;
+    }
+  }
+  
+  @media only screen and (min-width:1920px){
+    .container{
+      width: 80%;
+    }
+    .contact-h1{
+      margin-top:15vh;
+      font-size: 4.25em;
+    }
+    body{
+      font-size: 18px;
+    }
+    .about{
+      font-size: 1.2em;
+    }
+    .hero{
+      margin-top:20vh;
+    }
+    .loginform{
+      margin-top:30vh
+    }
+  }
+  
+  @media only screen and (min-width:2560px){
+    .logo{
+      width: 200px !important;
+    }
+    .navbar-right>li>a{
+      font-size: 24px !important; 
+      margin-top: 20px;
+    }
+    .container{
+      width: 80%;
+    }
+    .blog-name{
+      font-size: 7em;
+      margin-top: 30vh;
+    }
+    .hero-img{
+      margin-top: 15vh 
+    }
+    .contact-h1{
+      margin-top:20vh;
+      font-size: 6em;
+    }
+    .contact-img{
+      margin-top: 20vh;
+    }
+    body{
+      font-size: 18px;
+    }
+    .about{
+      font-size: 1.6em;
+    }
+    .cards{
+      padding: 15px;
+      height: 650px;
+      font-size: 2em
+    }
+    .blog-post{
+      font-size: 1.5em;
+      margin-top:25px;
+      padding: 15px;
+    }
+    .blog-post>img{
+      width: 100%;
+    }
+    small{
+      font-size: 0.5em;
+    }
+    h4{
+      font-size: 1em;
+    }
+    .cards>img{
+      height: 400px;
+    }
+    .hero{
+      margin-top:20vh;
+    }
+    .loginform{
+      margin-top:30vh
+    }
+  }
