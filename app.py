@@ -328,13 +328,13 @@ def get_applications(approver_id):
     client = MongoClient()
     db = client['employee_management_db']
     salary_apps = db.leave_collection_table
-    res = list(salary_apps.find())
+    res1 = list(salary_apps.find())
     leave_applications = list()
-    for i in res:
+    for i in res1:
         e_id = i['e_id']
         emp_db = db.employee_details_table
         res = list(emp_db.find({'e_id':e_id}))
-        if(res[0]['approver_id'] == approver_id):
+        if(res[0]['approver_id'] == approver_id and i['status'] == 'pending'):
             data = dict()
             data['e_id'] = i['e_id']
             data['type'] = i['type']

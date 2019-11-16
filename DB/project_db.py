@@ -47,8 +47,8 @@ data6 = {'e_id':'2019FIN003','user_name':'Alisha','e_contact':'8555755287','e_em
 data7 = {'e_id':'2019HRD001','user_name':'Ayushi','e_contact':'9430712120','e_email':'ayushi@gmail.com','e_type':'HOD','dept_id':'HRDEPT','leave_left':{'casual':'12','earned':'14','medical':'10'},'approver_id':'2019HRD001','reamt':'8000'}
 data8 = {'e_id':'2019HRD002','user_name':'Deepika','e_contact':'9835513120','e_email':'deepika007@gmail.com','e_type':'MANAGER','dept_id':'HRDEPT','leave_left':{'casual':'10','earned':'12','medical':'8'},'approver_id':'2019HRD001','reamt':'6000'}
 data9 = {'e_id':'2019HRD003','user_name':'Purva','e_contact':'9939212120','e_email':'purva001@gmail.com','e_type':'HR','dept_id':'HRDEPT','leave_left':{'casual':'8','earned':'10','medical':'6'},'approver_id':'2019HRD002','reamt':'4000'}
-
-employee_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
+data10 = {'e_id':'2019DEV004','user_name':'Sagarika','e_contact':'9992212130','e_email':'sagarika@gmail.com','e_type':'DEV','dept_id':'DEVBNG','leave_left':{'casual':'8','earned':'10','medical':'6'},'approver_id':'2019DEV001','reamt':'4000'}
+employee_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data10])
 
 #3.Leave Collection
 leave_col = db.leave_collection_table
@@ -56,7 +56,11 @@ data1 = {'e_id':'2019DEV003','type':'medical','list_of_dates':['29/10/2019','30/
 data2 = {'e_id':'2019DEV001','type':'casual','list_of_dates':['26/10/2019','28/10/2019','29/10/2019'],'reason':'casual leave','status':'pending'}
 data3 = {'e_id':'2019FIN002','type':'casual','list_of_dates':['2/11/2019'],'reason':'casual leave','status':'pending'}
 data4 = {'e_id':'2019HRD002','type':'medical','list_of_dates':['22/10/2019','23/10/2019','24/10/2019','25/10/2019'],'reason':'medical leave','status':'pending'}
-leave_col.insert_many([data1,data2,data3,data4])
+data5 = {'e_id':'2019DEV002','type':'casual','list_of_dates':['12/11/2019','13/11/2019','14/11/2019'],'reason':'casual leave','status':'approved'}
+data6 = {'e_id':'2019DEV002','type':'casual','list_of_dates':['4/11/2019','5/11/2019','6/11/2019'],'reason':'casual leave','status':'pending'}
+data7 = {'e_id':'2019DEV004','type':'casual','list_of_dates':['15/11/2019','16/11/2019','17/11/2019'],'reason':'casual leave','status':'pending'}
+data8 = {'e_id':'2019DEV004','type':'casual','list_of_dates':['23/11/2019','24/11/2019','25/11/2019'],'reason':'casual leave','status':'approved'}
+leave_col.insert_many([data1,data2,data3,data4,data5,data6,data7,data8])
 
 #6.Account Department
 account_det=db.account_department_table
@@ -69,9 +73,9 @@ account_det.insert_many([data1,data2,data3,data4,data5])
 
 #7.Salary
 salary_det=db.salary_detail_table
-data1={'e_id':'2019DEV001','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
-data2={'e_id':'2019DEV002','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
-data3={'e_id':'2019DEV003','last_salary_credited':'2/09/2019','reimbursed_amt':'2,500','last_bonus_credited':""}
+data1={'e_id':'2019DEV001','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':"01/09/2019"}
+data2={'e_id':'2019DEV002','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':"12/10/2018"}
+data3={'e_id':'2019DEV004','last_salary_credited':'2/09/2019','reimbursed_amt':'2,500','last_bonus_credited':"03/09/2018"}
 data4={'e_id':'2019FIN001','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
 data5={'e_id':'2019FIN002','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
 data6={'e_id':'2019FIN003','last_salary_credited':'2/09/2019','reimbursed_amt':'6,000','last_bonus_credited':""}
