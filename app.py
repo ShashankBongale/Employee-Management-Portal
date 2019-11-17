@@ -285,6 +285,7 @@ def approve_leave():
         client.close()
         return jsonify({'status':'rejected'}),200
     else:
+        print(empId)
         updated = str(int(empInfo[0]['leave_left'][lType]) - numberOfLeaves)
         data = empInfo[0]['leave_left']
         data[lType] = updated
@@ -334,7 +335,10 @@ def get_applications(approver_id):
     salary_apps = db.leave_collection_table
     res1 = list(salary_apps.find())
     leave_applications = list()
+    print(res1)
     for i in res1:
+        print("########################")
+        print("i",i)
         e_id = i['e_id']
         emp_db = db.employee_details_table
         res = list(emp_db.find({'e_id':e_id}))
