@@ -293,7 +293,7 @@ def approve_leave():
     leave_col = db.leave_collection_table
     empInfo = list(employee_details.find({'e_id':empId}))
     if(status=="REJECT"):
-        leave_col.update({'e_id':empId},{"$set": {'status':'rejected'}})
+        leave_col.update({'e_id':empId,'status':'pending'},{"$set": {'status':'rejected'}})
         client.close()
         return jsonify({'status':'rejected'}),200
     else:
@@ -302,7 +302,7 @@ def approve_leave():
         data = empInfo[0]['leave_left']
         data[lType] = updated
         employee_details.update({'e_id':empId},{"$set": {'leave_left':data}})
-        leave_col.update({'e_id':empId},{"$set": {'status':'approved'}})
+        leave_col.update({'e_id':empId,'status':'pending'},{"$set": {'status':'approved'}})
         client.close()
         return jsonify({'status':'approved'}),200
 
