@@ -255,6 +255,18 @@ def apply_leave():
     db = client['employee_management_db']
     employee_details = db.employee_details_table
     leave_col = db.leave_collection_table
+    new_res = list(leave_col.find({'e_id':empId}))
+    """
+    if(new_res[0]['status'] == "pending")
+        print("pending")
+        client.close()
+        return jsonify({'status':'cannot apply leave'}),400
+    """
+    for i in new_res:
+        if(i['status'] == "pending"):
+            print("pending")
+            client.close()
+            return jsonify({'status':'cannot apply leave'}),400
     empInfo = list(employee_details.find({'e_id':empId}))
     if(int(empInfo[0]['leave_left'][lType]) < numberOfLeaves):
         data = {'e_id':empId,'type':lType,'list_of_dates':dates,'reason':reason,'status':'rejected'}
