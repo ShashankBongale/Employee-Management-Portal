@@ -53,10 +53,9 @@ employee_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,da
 #3.Leave Collection
 leave_col = db.leave_collection_table
 data1 = {'e_id':'2019DEV003','type':'medical','list_of_dates':['29/10/2019','30/10/2019'],'reason':'medical leave','status':'pending'}
-data2 = {'e_id':'2019DEV001','type':'casual','list_of_dates':['26/10/2019','28/10/2019','29/10/2019'],'reason':'casual leave','status':'pending'}
 data3 = {'e_id':'2019FIN002','type':'casual','list_of_dates':['2/11/2019'],'reason':'casual leave','status':'pending'}
 data4 = {'e_id':'2019HRD002','type':'medical','list_of_dates':['22/10/2019','23/10/2019','24/10/2019','25/10/2019'],'reason':'medical leave','status':'pending'}
-leave_col.insert_many([data1,data2,data3,data4])
+leave_col.insert_many([data1,data3,data4])
 
 #6.Account Department
 account_det=db.account_department_table
