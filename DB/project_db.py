@@ -5,15 +5,15 @@ db = client['employee_management_db']
 
 #2.Login Collection
 login_details = db.login_table
-data1 = {'e_id':'2019DEV001','user_name':'Rahul','password':'E5857B335AFDF35CA81A110BC81F38682F8A89892CC597F5398DFEF82D42B513'}
-data2 = {'e_id':'2019DEV002','user_name':'Raghav','password':'9425C3AE8CF81E1475108C7CA9ACF70B5DF3FEAB935C1910DD0E618FB431DDA0'}
-data3 = {'e_id':'2019DEV003','user_name':'Sagar','password':'CFC2BB2D953B68C45D2711E542076A8F47C1A37778CF8A9CC117F087A5FDDE9F'}
-data4 = {'e_id':'2019FIN001','user_name':'Ashu','password':'5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
-data5 = {'e_id':'2019FIN002','user_name':'Ashish','password':'1282c71af676e24d8ab3202ad4e4264655f2238e0e1e82d138041f5721108653'}
-data6 = {'e_id':'2019FIN003','user_name':'Alisha','password':'fb2471d9606c6e3c2ab1eb5316f47b39c5d56262c3dafa7c991e8310150cc513'}
-data7 = {'e_id':'2019HRD001','user_name':'Ayushi','password':'4f278cdddf52263fe21c64c94932f2b2ec316acecd39a7adcc01eb2e6592a678'}
-data8 = {'e_id':'2019HRD002','user_name':'Deepika','password':'27223c7bdb7362a30b4d84254bc6e555f9bf0467b9796f6e9d62e47633dc29b3'}
-data9 = {'e_id':'2019HRD002','user_name':'Purva','password':'a0e58d8fb7d8dd44330b1a55ba190043e931617546d6c06c4bef4c2e77331642'}
+data1 = {'e_id':'2019DEV001','user_name':'Rahul','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data2 = {'e_id':'2019DEV002','user_name':'Raghav','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data3 = {'e_id':'2019DEV003','user_name':'Sagar','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data4 = {'e_id':'2019FIN001','user_name':'Ashu','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data5 = {'e_id':'2019FIN002','user_name':'Ashish','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data6 = {'e_id':'2019FIN003','user_name':'Alisha','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data7 = {'e_id':'2019HRD001','user_name':'Ayushi','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data8 = {'e_id':'2019HRD002','user_name':'Deepika','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
+data9 = {'e_id':'2019HRD002','user_name':'Purva','password':'a9993e364706816aba3e25717850c26c9cd0d89d'}
 login_details.insert_many([data1,data2,data3,data4,data5,data6,data7,data8,data9])
 
 #4.Deapartment
