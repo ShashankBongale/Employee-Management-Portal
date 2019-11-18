@@ -2,7 +2,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import DayPicker, { DateUtils } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-
+ 
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import Background from "./images/wallpaper.jpg"
@@ -57,7 +57,7 @@ class Leave extends React.Component {
                 }
               }
       )
-
+    
     //console.log(resp)
   }
 
@@ -68,14 +68,14 @@ class Leave extends React.Component {
     })
   }
 
-
+ 
   render(){
     return (
       <div style={{backgroundImage:"url(" + Background + ")", height:"100%",backgroundRepeat:'no-repeat',backgroundSize:'cover'}} >
         <MyNavbar> </MyNavbar>
         <div class="put_in_center">
             <h2 style={{justifyContent:'center',display:'flex',paddingTop:'2%',paddingBottom:'2%'}}>Personal Leave Details</h2>
-
+  
             <Table striped bordered hover style={{width:'80%',marginLeft:'10%'}}>
               <thead>
                 <tr>
@@ -119,7 +119,7 @@ class Leave extends React.Component {
                   }/>
           </Form.Group>
         </Form>
-
+        
         <Button onClick={this.handleSubmit} variant="secondary">Submit Leave application</Button>
         </div>
         <Button onClick={this.handleStatusCheck} style={{float:'right',marginBottom:'1%',marginRight:'1%'}} variant="info">Check Leave Application Status</Button>
